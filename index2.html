@@ -813,15 +813,6 @@ body::after {
   background:linear-gradient(90deg,transparent,var(--blue),transparent);
   opacity:.5;
 }
-/* ── MOOD BUTTONS ── */
-.mood-btn {
-  font-size:22px;background:none;border:2px solid transparent;border-radius:50%;
-  width:38px;height:38px;cursor:pointer;transition:all .15s;line-height:1;
-  display:flex;align-items:center;justify-content:center;
-}
-.mood-btn:hover { transform:scale(1.2); }
-.mood-btn.selected { border-color:var(--gold);background:rgba(232,184,75,.15);transform:scale(1.15); }
-
 .home-panel-title {
   font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;
   letter-spacing:.1em;margin-bottom:12px;display:flex;align-items:center;gap:6px;
@@ -1375,51 +1366,31 @@ body::after {
     <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;height:calc(100vh - 120px)">
 
       <!-- 左: 今日のサマリー -->
-      <div style="display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto">
+      <div style="display:flex;flex-direction:column;gap:16px;min-height:0">
 
-        <!-- 達成バッジ + ムードトラッカー -->
+        <!-- 達成バッジ -->
         <div class="card" style="flex-shrink:0">
-          <div id="daily-achievement-banner" style="text-align:center;padding:8px 0 4px">
-            <div id="daily-score-ring" style="font-size:42px;margin-bottom:2px">🌟</div>
-            <div id="daily-score-label" style="font-size:17px;font-weight:700;color:var(--gold)">今日も充実した一日！</div>
-            <div id="daily-score-sub" style="font-size:12px;color:var(--text3);margin-top:2px"></div>
+          <div id="daily-achievement-banner" style="text-align:center;padding:12px 0">
+            <div id="daily-score-ring" style="font-size:48px;margin-bottom:4px">🌟</div>
+            <div id="daily-score-label" style="font-size:18px;font-weight:700;color:var(--gold)">今日も充実した一日！</div>
+            <div id="daily-score-sub" style="font-size:12px;color:var(--text3);margin-top:4px"></div>
           </div>
-          <!-- Stats row -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px">
-            <div class="stat-card"><div class="stat-num numbers" id="daily-tasks-done" style="color:var(--green)">0</div><div class="stat-label">完了</div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+            <div class="stat-card"><div class="stat-num numbers" id="daily-tasks-done" style="color:var(--green)">0</div><div class="stat-label">完了タスク</div></div>
             <div class="stat-card"><div class="stat-num numbers" id="daily-sched-count" style="color:var(--blue)">0</div><div class="stat-label">予定</div></div>
-            <div class="stat-card"><div class="stat-num numbers" id="daily-pomodoro-count" style="color:var(--orange)">0</div><div class="stat-label">🍅</div></div>
-            <div class="stat-card"><div class="stat-num numbers" id="daily-streak" style="color:var(--gold)">0</div><div class="stat-label">🔥連続</div></div>
+            <div class="stat-card"><div class="stat-num numbers" id="daily-pomodoro-count" style="color:var(--orange)">0</div><div class="stat-label">🍅 ポモドーロ</div></div>
           </div>
-          <!-- Mood tracker -->
-          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:700">今日の気分は？</div>
-            <div style="display:flex;gap:8px;justify-content:center">
-              <button onclick="setMood(1)" id="mood-1" class="mood-btn" title="最悪">😫</button>
-              <button onclick="setMood(2)" id="mood-2" class="mood-btn" title="疲れた">😔</button>
-              <button onclick="setMood(3)" id="mood-3" class="mood-btn" title="普通">😐</button>
-              <button onclick="setMood(4)" id="mood-4" class="mood-btn" title="良い">😊</button>
-              <button onclick="setMood(5)" id="mood-5" class="mood-btn" title="最高">🤩</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 週間チャート -->
-        <div class="card" style="flex-shrink:0">
-          <div class="card-title">📊 週間アクティビティ</div>
-          <canvas id="daily-weekly-chart" style="width:100%;height:100px"></canvas>
-          <div id="daily-weekly-labels" style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text3);font-family:'Outfit',sans-serif"></div>
         </div>
 
         <!-- 完了したタスク一覧 -->
-        <div class="card" style="flex:1;min-height:100px;display:flex;flex-direction:column">
-          <div class="card-title" style="flex-shrink:0">✅ 今日完了したこと</div>
+        <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+          <div class="card-title">✅ 今日完了したこと</div>
           <div id="daily-done-list" style="overflow-y:auto;flex:1;min-height:0"></div>
         </div>
 
         <!-- 今日の予定 -->
-        <div class="card" style="flex:1;min-height:80px;display:flex;flex-direction:column">
-          <div class="card-title" style="flex-shrink:0">📍 今日の予定</div>
+        <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+          <div class="card-title">📍 今日の予定</div>
           <div id="daily-sched-list" style="overflow-y:auto;flex:1;min-height:0"></div>
         </div>
       </div>
@@ -1427,24 +1398,23 @@ body::after {
       <!-- 右: 日記・メモ -->
       <div style="display:flex;flex-direction:column;min-height:0">
         <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-          <div class="card-title" style="flex-shrink:0">
+          <div class="card-title">
             📓 今日の日記
             <span id="daily-date-label" style="margin-left:8px;font-size:11px;color:var(--text3)"></span>
-            <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="saveDailyNote(this)">保存</button>
+            <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="saveDailyNote()">保存</button>
           </div>
           <textarea id="daily-note-input" placeholder="今日あったこと、感じたこと、気づき、明日やりたいことを自由に書いてください…" style="flex:1;min-height:0;resize:none;font-size:14px;line-height:1.8;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'M PLUS 1p',sans-serif"></textarea>
           <!-- テンプレートボタン -->
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;flex-shrink:0">
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
             <span style="font-size:11px;color:var(--text3);align-self:center">テンプレ：</span>
             <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('3good')">3 Good Things</button>
-            <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('reflection')">KPT振り返り</button>
+            <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('reflection')">振り返り</button>
             <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('tomorrow')">明日の準備</button>
-            <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('gratitude')">感謝リスト</button>
           </div>
           <!-- 過去のエントリ -->
-          <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-shrink:0">
-            <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:700">過去の記録 <span id="daily-entry-count" style="color:var(--blue)"></span></div>
-            <div id="daily-history" style="display:flex;gap:6px;flex-wrap:wrap;max-height:60px;overflow-y:auto"></div>
+          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:700">過去の記録</div>
+            <div id="daily-history" style="display:flex;gap:6px;flex-wrap:wrap"></div>
           </div>
         </div>
       </div>
@@ -2400,33 +2370,16 @@ function taskHTML(t) {
   const pText = { high:'🔴 高', mid:'🟠 中', low:'🔵 低' }[t.priority];
   const dl = t.deadline ? `<span class="badge badge-date numbers">${t.deadline}</span>` : '';
   const cat = t.category ? `<span class="badge badge-date">${t.category}</span>` : '';
-  return `<div class="task-item ${t.done?'done':''}" onclick="openTaskModal(${t.id})" style="cursor:pointer">
+  return `<div class="task-item ${t.done?'done':''}" ondblclick="toggleTask(${t.id})" onclick="openTaskModal(${t.id})" style="cursor:pointer">
     <div class="task-check ${t.done?'checked':''}" onclick="event.stopPropagation();toggleTask(${t.id})" style="flex-shrink:0"></div>
-    <div class="task-title"
-      onclick="event.stopPropagation();openTaskModal(${t.id})"
-      ondblclick="event.stopPropagation();toggleTask(${t.id})"
-      ontouchstart="_taskTouchStart(event,${t.id})"
-      ontouchend="_taskTouchEnd(event)"
-      style="cursor:pointer;flex:1">${t.title}</div>
+    <div class="task-title" ondblclick="event.stopPropagation();toggleTask(${t.id})" onclick="event.stopPropagation();openTaskModal(${t.id})" style="cursor:pointer;flex:1">${t.title}</div>
     <div class="task-meta" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
-      ${cat}${dl}
+      ${cat}
+      ${dl}
       <span class="badge ${pBadge}">${pText}</span>
       <button class="task-del" onclick="event.stopPropagation();deleteTask(${t.id})">✕</button>
     </div>
   </div>`;
-}
-
-// ── Mobile long-press for task complete (500ms) ──
-let _taskLongPressTimer = null;
-function _taskTouchStart(e, id) {
-  _taskLongPressTimer = setTimeout(() => {
-    e.preventDefault();
-    toggleTask(id);
-    if(navigator.vibrate) navigator.vibrate(60); // haptic feedback
-  }, 500);
-}
-function _taskTouchEnd(e) {
-  clearTimeout(_taskLongPressTimer);
 }
 
 function toggleTask(id) {
@@ -3372,7 +3325,7 @@ function loadGsiScript(callback) {
 
 // ── トークン管理 ──
 function _saveToken(token, expiresIn) {
-  const expiry = Date.now() + (expiresIn || 3599) * 1000 - 120000; // 2分早めに期限切れ
+  const expiry = Date.now() + (expiresIn || 3599) * 1000 - 60000; // 1分早めに期限切れとする
   localStorage.setItem(GCAL_TOKEN_KEY,  token);
   localStorage.setItem(GCAL_EXPIRY_KEY, String(expiry));
 }
@@ -3380,35 +3333,11 @@ function _getToken() {
   const token  = localStorage.getItem(GCAL_TOKEN_KEY);
   const expiry = Number(localStorage.getItem(GCAL_EXPIRY_KEY) || '0');
   if(token && Date.now() < expiry) return token;
-  return null;
+  return null; // 期限切れ or 未設定
 }
 function _clearToken() {
   localStorage.removeItem(GCAL_TOKEN_KEY);
   localStorage.removeItem(GCAL_EXPIRY_KEY);
-}
-function _isTokenExpiringSoon() {
-  const expiry = Number(localStorage.getItem(GCAL_EXPIRY_KEY) || '0');
-  // True if token expires within 5 minutes
-  return expiry > 0 && Date.now() > expiry - 5 * 60 * 1000;
-}
-
-// ── Silent token refresh (no popup if user already consented) ──
-function _silentRefreshToken(clientId, onSuccess, onFail) {
-  loadGsiScript(() => {
-    try {
-      const client = google.accounts.oauth2.initTokenClient({
-        client_id: clientId,
-        scope: 'https://www.googleapis.com/auth/calendar.readonly',
-        prompt: '',  // empty = silent if consent already given
-        callback: (resp) => {
-          if(resp.error || !resp.access_token) { onFail(resp.error || 'no_token'); return; }
-          _saveToken(resp.access_token, resp.expires_in);
-          onSuccess(resp.access_token);
-        },
-      });
-      client.requestAccessToken({ prompt: '' });
-    } catch(e) { onFail(e.message); }
-  });
 }
 
 function _updateGcalStatus(msg) {
@@ -3466,37 +3395,17 @@ function _updateDisconnectBtn(connected) {
 async function autoSyncGoogleCalendar() {
   // 方法①: ICS URL が設定されていればそちらを優先
   const icsUrl = getSettings().icsUrl?.trim();
-  if(icsUrl) { await syncIcsDirect(true); return; }
-
-  // 方法②: OAuth
-  const clientId = getSettings().googleClientId?.trim();
-  if(!clientId) return;
-
-  const token = _getToken();
-  if(token) {
-    // 有効なトークンあり → そのまま使う
-    _updateGcalStatus('🔄 Googleカレンダー同期中...');
-    _updateDisconnectBtn(true);
-    await fetchGoogleCalendarEvents(token);
+  if(icsUrl) {
+    await syncIcsDirect(true);
     return;
   }
-
-  // トークン切れ → サイレントリフレッシュを試みる
-  _updateGcalStatus('🔑 トークン更新中...');
+  // 方法②: OAuth トークンがあれば使う
+  const token    = _getToken();
+  const clientId = getSettings().googleClientId?.trim();
+  if(!token || !clientId) return;
+  _updateGcalStatus('🔄 Googleカレンダー同期中...');
   _updateDisconnectBtn(true);
-  _silentRefreshToken(
-    clientId,
-    async (newToken) => {
-      _updateGcalStatus('🔄 Googleカレンダー同期中...');
-      await fetchGoogleCalendarEvents(newToken);
-    },
-    (err) => {
-      // サイレント失敗（ポップアップなし）→ 再ログインを促す
-      _clearToken();
-      _updateDisconnectBtn(false);
-      _updateGcalStatus('🔑 セッション切れ。設定タブで再連携してください。');
-    }
-  );
+  await fetchGoogleCalendarEvents(token);
 }
 
 // ── 実際に予定を取得 ──
@@ -3633,19 +3542,12 @@ function setHomeSchedMode(mode) {
 
 function renderHomeMiniTimeline() {
   const el = document.getElementById('home-timeline-mini');
-  if(!el || el.style.display === 'none') return;
-  // If not yet sized (first render before layout), use ResizeObserver
-  if(el.offsetHeight < 20) {
-    if(!el._ro) {
-      el._ro = new ResizeObserver(() => {
-        if(el.offsetHeight >= 20) { el._ro.disconnect(); el._ro=null; renderHomeMiniTimeline(); }
-      });
-      el._ro.observe(el);
-    }
-    return;
-  }
+  if(!el) return;
+  // Re-use full timeline renderer but render into home-timeline-mini
+  const origContainer = document.getElementById('timeline-container');
+  // Temporarily swap container for measurement
+  const h = el.offsetHeight || 400;
   const allItems = getSchedule();
-  const h = el.offsetHeight;
   const items = allItems.filter(i => !!i.time);
   const now = new Date(), nowMin = now.getHours()*60+now.getMinutes();
   let gridStart = 6*60, gridEnd = 23*60+30;
@@ -3723,41 +3625,10 @@ function updateHomeFreeBadge() {
   }
 }
 
-// ── Timer sound: real beep via Web Audio API ──
-function _playBeep() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.6, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.8);
-  } catch(e) {}
-}
-
-// ── Pomodoro daily count (resets each day) ──
-const POMODORO_DATE_KEY = 'pomodoroCntDate';
-function getTodayPomodoroCount() {
-  const today = todayKey();
-  const saved = localStorage.getItem(POMODORO_DATE_KEY);
-  if(saved !== today) {
-    // New day — reset
-    localStorage.setItem(POMODORO_DATE_KEY, today);
-    localStorage.setItem('pomodoroCount', '0');
-    return 0;
-  }
-  return parseInt(localStorage.getItem('pomodoroCount') || '0');
-}
-// Init pomodoroCount with daily reset
-let pomodoroCount = getTodayPomodoroCount();
-
-// ── Timer modes ──
+// ==================== TIMER ====================
 let timerInterval = null, timerRemaining = 25*60, timerTotal = 25*60, timerRunning = false;
 let timerMode = 'pomodoro';
+let pomodoroCount = parseInt(localStorage.getItem('pomodoroCount')||'0');
 const TIMER_MODES = { pomodoro:{secs:25*60,label:'集中タイム 🍅'}, short:{secs:5*60,label:'短休憩 ☕'}, long:{secs:15*60,label:'長休憩 🌿'}, custom:{secs:25*60,label:'カスタム ⚙'} };
 
 function setTimerMode(mode, btn) {
@@ -3799,15 +3670,10 @@ function timerStart() {
   timerInterval = setInterval(()=>{
     if(timerRemaining<=0) {
       clearInterval(timerInterval); timerRunning=false;
-      if(timerMode==='pomodoro'){
-        pomodoroCount++;
-        localStorage.setItem('pomodoroCount', pomodoroCount);
-        localStorage.setItem(POMODORO_DATE_KEY, todayKey());
-        const pc=document.getElementById('pomodoro-num');if(pc)pc.textContent=pomodoroCount;
-      }
+      if(timerMode==='pomodoro'){ pomodoroCount++; localStorage.setItem('pomodoroCount',pomodoroCount); const pc=document.getElementById('pomodoro-num');if(pc)pc.textContent=pomodoroCount; }
       renderTimerDisplay();
-      _playBeep();
-      if(Notification.permission==='granted') new Notification('⏱ タイマー終了！',{body: (TIMER_MODES[timerMode]?.label||'タイマー')+' が終わりました'});
+      try{ new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA...').play().catch(()=>{}); }catch(e){}
+      if(Notification.permission==='granted') new Notification('⏱ タイマー終了！',{body: TIMER_MODES[timerMode]?.label+' が終わりました'});
       return;
     }
     timerRemaining--;
@@ -3871,59 +3737,16 @@ function swUpdateDisplay(){const el=document.getElementById('sw-display');if(el)
 function _fmtSw(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),t=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}.${t}`;}
 
 // ==================== DAILY TAB ====================
-function getDailyNotes()  { return DB.get('daily_notes')  || {}; }
+function getDailyNotes(){ return DB.get('daily_notes') || {}; }
 function saveDailyNotes(n){ DB.set('daily_notes', n); }
-function getDailyMoods()  { return DB.get('daily_moods')  || {}; }
-function saveDailyMoods(m){ DB.set('daily_moods', m); }
-
-// ── Streak: consecutive days with a note or completed task ──
-function calcStreak() {
-  const notes = getDailyNotes();
-  const tasks = getTasks();
-  let streak = 0;
-  const d = new Date();
-  // Check today first, then go backwards
-  for(let i = 0; i < 365; i++) {
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const hasNote = !!notes[key];
-    const hasDone = tasks.some(t => t.done && (t.deadline===key || t.created===key));
-    if(hasNote || hasDone) {
-      streak++;
-      d.setDate(d.getDate() - 1);
-    } else {
-      // Allow gap for today (it might not be done yet)
-      if(i === 0) { d.setDate(d.getDate() - 1); continue; }
-      break;
-    }
-  }
-  return streak;
-}
-
-// ── Mood ──
-function setMood(val) {
-  const today = todayKey();
-  const moods = getDailyMoods();
-  moods[today] = val;
-  saveDailyMoods(moods);
-  // Update button styles
-  for(let i=1;i<=5;i++) {
-    const btn = document.getElementById('mood-'+i);
-    if(btn) btn.classList.toggle('selected', i===val);
-  }
-}
 
 function renderDailyTab() {
   const today = todayKey();
   const notes = getDailyNotes();
-  const moods = getDailyMoods();
 
   // Date label
   const lbl = document.getElementById('daily-date-label');
-  if(lbl) {
-    const d=new Date();
-    const days=['日','月','火','水','木','金','土'];
-    lbl.textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
-  }
+  if(lbl){ const d=new Date(); const days=['日','月','火','水','木','金','土']; lbl.textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`; }
 
   // Load note
   const noteEl = document.getElementById('daily-note-input');
@@ -3931,205 +3754,111 @@ function renderDailyTab() {
 
   // Stats
   const tasks = getTasks();
-  const todayDone = tasks.filter(t => t.done && (t.scope==='today'||t.deadline===today||t.created===today));
-  const sched = getSchedule().filter(i => i.time);
-  const pc = getTodayPomodoroCount();
-  const streak = calcStreak();
+  const todayDone = tasks.filter(t=>t.done&&(t.scope==='today'||t.deadline===today||t.created===today));
+  const sched = getSchedule().filter(i=>i.time);
+  const pc = parseInt(localStorage.getItem('pomodoroCount')||'0');
 
-  const set = (id, val) => { const e=document.getElementById(id); if(e) e.textContent=val; };
-  set('daily-tasks-done',    todayDone.length);
-  set('daily-sched-count',   sched.length);
-  set('daily-pomodoro-count',pc);
-  set('daily-streak',        streak);
+  const dEl=document.getElementById('daily-tasks-done'); if(dEl) dEl.textContent=todayDone.length;
+  const sEl=document.getElementById('daily-sched-count'); if(sEl) sEl.textContent=sched.length;
+  const pEl=document.getElementById('daily-pomodoro-count'); if(pEl) pEl.textContent=pc;
 
   // Achievement label
-  const score = todayDone.length * 2 + pc * 3 + Math.min(sched.length, 3);
+  const score = todayDone.length + sched.length + pc;
+  const banner = document.getElementById('daily-score-label');
+  const ring   = document.getElementById('daily-score-ring');
+  const sub    = document.getElementById('daily-score-sub');
   const msgs = [
-    [0,  '😴', 'まずは一歩から',          'どんな小さなことでも行動しよう'],
-    [3,  '🌱', 'スタートが切れた！',       '小さな一歩が積み重なる'],
-    [7,  '⚡', '順調に進んでいる',         'この調子で続けよう！'],
-    [12, '🔥', '充実した一日！',           'すごい集中力だ！'],
-    [18, '🌟', '完璧な一日！',             '今日は胸を張って休もう！'],
+    [0, '😴', '今日はゆっくり休む日', 'また明日頑張ろう！'],
+    [2, '🌱', 'スタートが切れた！', '小さな一歩が積み重なる'],
+    [4, '⚡', '順調に進んでいる', 'この調子で続けよう！'],
+    [7, '🔥', '充実した一日！', 'すごい集中力だ！'],
+    [10, '🌟', '完璧な一日！', '今日は胸を張って休もう！'],
   ];
-  const m = [...msgs].reverse().find(([s]) => score >= s) || msgs[0];
-  set('daily-score-ring',  m[1]);
-  set('daily-score-label', m[2]);
-  set('daily-score-sub',   m[3]);
-
-  // Mood buttons
-  const todayMood = moods[today] || 0;
-  for(let i=1;i<=5;i++) {
-    const btn = document.getElementById('mood-'+i);
-    if(btn) btn.classList.toggle('selected', i===todayMood);
-  }
-
-  // Weekly chart
-  _renderWeeklyChart();
+  const m = [...msgs].reverse().find(([s])=>score>=s) || msgs[0];
+  if(ring) ring.textContent=m[1]; if(banner) banner.textContent=m[2]; if(sub) sub.textContent=m[3];
 
   // Completed tasks
   const doneEl = document.getElementById('daily-done-list');
   if(doneEl) {
-    doneEl.innerHTML = !todayDone.length
-      ? '<div class="empty-state" style="padding:12px"><div class="emoji">✨</div>タスクを完了するとここに表示されます</div>'
-      : todayDone.map(t => `
-          <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-            <span style="color:var(--green);font-size:14px;flex-shrink:0">✓</span>
-            <span style="font-size:13px;flex:1">${t.title}</span>
-            ${t.category ? `<span class="badge badge-date">${t.category}</span>` : ''}
-          </div>`).join('');
+    if(!todayDone.length) {
+      doneEl.innerHTML='<div class="empty-state" style="padding:16px"><div class="emoji">✨</div>タスクを完了するとここに表示されます</div>';
+    } else {
+      doneEl.innerHTML = todayDone.map(t=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
+          <span style="color:var(--green);font-size:14px">✓</span>
+          <span style="font-size:13px;text-decoration:line-through;color:var(--text2)">${t.title}</span>
+          ${t.category?`<span class="badge badge-date">${t.category}</span>`:''}
+        </div>`).join('');
+    }
   }
 
   // Schedule
   const schedEl = document.getElementById('daily-sched-list');
   if(schedEl) {
-    schedEl.innerHTML = !sched.length
-      ? '<div style="font-size:12px;color:var(--text3);text-align:center;padding:10px">予定なし</div>'
-      : sched.map(item => {
-          const c = colorMap[item.color] || '#4a9eff';
-          return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
-            <div style="width:7px;height:7px;border-radius:50%;background:${c};flex-shrink:0"></div>
-            <span style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);width:38px;flex-shrink:0">${item.time}</span>
-            <span style="font-size:13px">${item.title}</span>
-          </div>`;
-        }).join('');
-  }
-
-  // History buttons
-  const histEl = document.getElementById('daily-history');
-  const cntEl  = document.getElementById('daily-entry-count');
-  if(histEl) {
-    const keys = Object.keys(notes).sort().reverse().slice(0, 21);
-    if(cntEl) cntEl.textContent = keys.length ? keys.length+'件' : '';
-    histEl.innerHTML = keys.map(k => `
-      <button onclick="loadDailyNote('${k}')"
-        style="padding:3px 9px;border-radius:10px;border:1px solid ${k===today?'var(--blue)':'var(--border)'};
-               background:${k===today?'rgba(74,158,255,.15)':'transparent'};
-               color:${k===today?'var(--blue)':'var(--text3)'};
-               font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;white-space:nowrap">
-        ${k.slice(5)}${getDailyMoods()[k] ? ' '+['','😫','😔','😐','😊','🤩'][getDailyMoods()[k]] : ''}
-      </button>`).join('');
-  }
-}
-
-function _renderWeeklyChart() {
-  const canvas = document.getElementById('daily-weekly-chart');
-  const labelsEl = document.getElementById('daily-weekly-labels');
-  if(!canvas) return;
-
-  const ctx = canvas.getContext('2d');
-  const W = canvas.offsetWidth || 300;
-  const H = 100;
-  canvas.width = W * (window.devicePixelRatio || 1);
-  canvas.height = H * (window.devicePixelRatio || 1);
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-  ctx.clearRect(0, 0, W, H);
-
-  const tasks = getTasks();
-  const notes = getDailyNotes();
-  const moods = getDailyMoods();
-  const days = ['日','月','火','水','木','金','土'];
-  const data = [];
-
-  for(let i=6; i>=0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const doneCnt = tasks.filter(t => t.done && (t.deadline===key || t.created===key)).length;
-    const pomoCnt = key === todayKey() ? getTodayPomodoroCount() : 0; // TODO: store historical
-    const hasNote = !!notes[key];
-    const mood = moods[key] || 0;
-    const score = Math.min(doneCnt * 2 + (hasNote?2:0) + pomoCnt, 10);
-    data.push({ key, label: days[d.getDay()], date: d.getDate(), score, mood });
-  }
-
-  const maxScore = Math.max(...data.map(d => d.score), 1);
-  const barW = (W - 20) / 7;
-  const padX = 10;
-
-  data.forEach((d, i) => {
-    const x = padX + i * barW + barW * 0.15;
-    const bw = barW * 0.7;
-    const barH = d.score > 0 ? Math.max((d.score / maxScore) * (H - 24), 4) : 2;
-    const y = H - 16 - barH;
-
-    // Bar gradient
-    const isToday = i === 6;
-    const grad = ctx.createLinearGradient(0, y, 0, H-16);
-    grad.addColorStop(0, isToday ? 'rgba(232,184,75,.9)' : 'rgba(74,158,255,.7)');
-    grad.addColorStop(1, isToday ? 'rgba(232,184,75,.2)' : 'rgba(74,158,255,.15)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.roundRect ? ctx.roundRect(x, y, bw, barH, 3) : ctx.rect(x, y, bw, barH);
-    ctx.fill();
-
-    // Mood dot on top
-    if(d.mood > 0) {
-      ctx.font = '10px serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(['','😫','😔','😐','😊','🤩'][d.mood], x + bw/2, y - 2);
+    if(!sched.length) {
+      schedEl.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:12px">予定なし</div>';
+    } else {
+      schedEl.innerHTML = sched.map(item=>{
+        const c=colorMap[item.color]||'#4a9eff';
+        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0"></div>
+          <span style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);width:40px">${item.time}</span>
+          <span style="font-size:13px">${item.title}</span>
+        </div>`;
+      }).join('');
     }
-  });
+  }
 
-  // Labels
-  if(labelsEl) {
-    labelsEl.innerHTML = data.map((d, i) => `
-      <span style="flex:1;text-align:center;color:${i===6?'var(--gold)':'var(--text3)'};font-weight:${i===6?'700':'400'}">
-        ${d.label}<br><span style="font-size:9px">${d.date}</span>
-      </span>`).join('');
+  // History
+  const histEl = document.getElementById('daily-history');
+  if(histEl) {
+    const keys = Object.keys(notes).sort().reverse().slice(0,14);
+    histEl.innerHTML = keys.map(k=>`
+      <button onclick="loadDailyNote('${k}')" style="padding:4px 10px;border-radius:10px;border:1px solid ${k===today?'var(--blue)':'var(--border)'};background:${k===today?'rgba(74,158,255,.15)':'transparent'};color:${k===today?'var(--blue)':'var(--text3)'};font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s">${k.slice(5)}</button>`).join('');
   }
 }
 
 function loadDailyNote(dateKey) {
   const notes = getDailyNotes();
-  const moods = getDailyMoods();
   const noteEl = document.getElementById('daily-note-input');
-  const lbl    = document.getElementById('daily-date-label');
+  const lbl = document.getElementById('daily-date-label');
   if(noteEl) noteEl.value = notes[dateKey] || '';
   if(lbl) { const p=dateKey.split('-'); lbl.textContent=`${p[0]}年${p[1]}月${p[2]}日`; }
-
-  // Show mood for selected date
-  const dateMood = moods[dateKey] || 0;
-  for(let i=1;i<=5;i++) {
-    const btn = document.getElementById('mood-'+i);
-    if(btn) btn.classList.toggle('selected', i===dateMood);
-  }
-
-  // Highlight selected history button
-  document.querySelectorAll('#daily-history button').forEach(b => {
-    const isSelected = b.textContent.trim().startsWith(dateKey.slice(5));
-    b.style.borderColor = isSelected ? 'var(--blue)' : 'var(--border)';
-    b.style.color       = isSelected ? 'var(--blue)' : 'var(--text3)';
-    b.style.background  = isSelected ? 'rgba(74,158,255,.15)' : 'transparent';
+  // Highlight selected
+  const today = todayKey();
+  document.querySelectorAll('#daily-history button').forEach(b=>{
+    const isSelected = b.textContent===dateKey.slice(5);
+    b.style.borderColor = isSelected?'var(--blue)':'var(--border)';
+    b.style.color = isSelected?'var(--blue)':'var(--text3)';
+    b.style.background = isSelected?'rgba(74,158,255,.15)':'transparent';
   });
 }
 
-function saveDailyNote(btn) {
+function saveDailyNote() {
   const today = todayKey();
   const notes = getDailyNotes();
-  const val   = document.getElementById('daily-note-input')?.value || '';
+  const val = document.getElementById('daily-note-input')?.value || '';
   if(val.trim()) notes[today] = val;
   else delete notes[today];
   saveDailyNotes(notes);
   renderDailyTab();
-  if(btn) {
-    const orig = btn.textContent;
-    btn.textContent = '✅ 保存済み';
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-  }
+  // Flash save feedback
+  const btn = event.currentTarget;
+  const orig = btn.textContent;
+  btn.textContent = '✅ 保存済み';
+  setTimeout(()=>btn.textContent=orig, 1500);
 }
 
 function insertDailyTemplate(type) {
   const templates = {
-    '3good':      '【今日の3 Good Things】\n1. \n2. \n3. \n\n【明日やりたいこと】\n',
-    'reflection': '【KPT振り返り】\n\n✅ Keep（続けたいこと）\n\n🔄 Problem（課題・反省）\n\n💡 Try（次に試すこと）\n',
-    'tomorrow':   '【明日の準備】\n\n📌 最重要タスク\n1. \n\n📋 やること\n- \n- \n\n⚠️ 忘れずに\n',
-    'gratitude':  '【今日の感謝リスト】\n1. \n2. \n3. \n\n【誰かに感謝を伝えたい】\n',
+    '3good': `【今日の3 Good Things】\n1. \n2. \n3. \n\n【明日やりたいこと】\n`,
+    'reflection': `【今日のKPT振り返り】\n\n✅ Keep（続けたいこと）\n\n🔄 Problem（課題・反省）\n\n💡 Try（次に試すこと）\n`,
+    'tomorrow': `【明日の準備】\n\n📌 最重要タスク\n1. \n\n📋 やること\n- \n- \n\n⚠️ 忘れずに\n`,
   };
   const el = document.getElementById('daily-note-input');
   if(!el) return;
   const cur = el.value;
-  el.value = cur + (cur && !cur.endsWith('\n') ? '\n\n' : '') + templates[type];
+  el.value = cur + (cur&&!cur.endsWith('\n')?'\n\n':'') + templates[type];
   el.focus();
 }
 
