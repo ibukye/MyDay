@@ -796,17 +796,15 @@ body::after {
 .home-grid {
   display:grid;
   grid-template-columns:1.1fr 1fr 1.2fr;
-  grid-template-rows:1fr 1fr;
+  grid-template-rows:auto auto;
   gap:14px;
-  height:calc(100vh - 130px); /* ヘッダー+タブ分を引いた残り全部 */
 }
-@media(max-width:1100px){.home-grid{grid-template-columns:1fr 1fr;height:auto;}}
-@media(max-width:700px){.home-grid{grid-template-columns:1fr;height:auto;}}
+@media(max-width:1100px){.home-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.home-grid{grid-template-columns:1fr;}}
 
 .home-panel {
   background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
   padding:16px;position:relative;overflow:hidden;
-  min-height:0; /* allow shrinking inside grid rows */
 }
 .home-panel::before {
   content:'';position:absolute;top:0;left:0;right:0;height:1px;
@@ -889,8 +887,6 @@ body::after {
   <button class="tab-btn" onclick="switchTab('weekly')">📅 毎週</button>
   <button class="tab-btn" onclick="switchTab('news')">📰 ニュース</button>
   <button class="tab-btn" onclick="switchTab('study')">📚 勉強</button>
-  <button class="tab-btn" onclick="switchTab('timer')">⏱ タイマー</button>
-  <button class="tab-btn" onclick="switchTab('daily')">📓 Daily</button>
   <button class="tab-btn" onclick="switchTab('settings')">⚙️ 設定</button>
 </div>
 
@@ -901,73 +897,52 @@ body::after {
   <div id="tab-home" class="tab-content active">
     <div class="home-grid">
 
-      <!-- 【左列】今日の予定 - span 2行・フルハイト -->
-      <div class="home-panel" style="grid-row:span 2;display:flex;flex-direction:column;overflow:hidden">
+      <!-- 【左列】今日の予定 -->
+      <div class="home-panel" style="grid-row:span 2">
         <div class="home-panel-title">
           <span class="dot"></span>TODAY'S SCHEDULE
-          <div style="margin-left:auto;display:flex;gap:4px;align-items:center">
-            <button id="home-sched-list-btn" onclick="setHomeSchedMode('list')"
-              style="padding:2px 8px;border-radius:10px;border:1px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .15s">リスト</button>
-            <button id="home-sched-tl-btn" onclick="setHomeSchedMode('timeline')"
-              style="padding:2px 8px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .15s">タイムライン</button>
-            <span style="font-size:10px;cursor:pointer;color:var(--text3);margin-left:2px" onclick="switchTab('today')">詳細→</span>
-          </div>
+          <span style="margin-left:auto;font-size:10px;cursor:pointer;color:var(--blue)" onclick="switchTab('today')">詳細 →</span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(232,184,75,.12);border:1px solid rgba(232,184,75,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--gold)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div id="home-now-badge" style="display:inline-flex;align-items:center;gap:6px;background:rgba(232,184,75,.12);border:1px solid rgba(232,184,75,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--gold)">
             <span style="width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite"></span>
             <span id="home-now-time" class="numbers">--:--</span>
           </div>
-          <div id="home-free-badge" style="font-size:11px;color:var(--green);display:none">
-            <span id="home-free-text"></span>
-          </div>
           <button onclick="openSchedModal()" style="margin-left:auto;background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.3);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--blue);cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s" onmouseover="this.style.background='rgba(74,158,255,.22)'" onmouseout="this.style.background='rgba(74,158,255,.12)'">＋ 追加</button>
         </div>
-        <!-- リストビュー -->
-        <div id="home-schedule" style="flex:1;overflow-y:auto;min-height:0"></div>
-        <!-- ミニタイムラインビュー -->
-        <div id="home-timeline-mini" style="flex:1;display:none;min-height:0;position:relative"></div>
+        <div id="home-schedule"></div>
       </div>
 
       <!-- 【中列上】タスク -->
-      <div class="home-panel" style="display:flex;flex-direction:column;overflow:hidden">
-        <div class="home-panel-title" style="flex-shrink:0">
+      <div class="home-panel">
+        <div class="home-panel-title">
           <span class="dot" style="background:var(--green);box-shadow:0 0 6px var(--green)"></span>TASKS
           <span id="home-task-count" style="margin-left:6px;font-size:10px;color:var(--text3)"></span>
           <span style="margin-left:auto;font-size:10px;cursor:pointer;color:var(--blue)" onclick="switchTab('tasks')">全て →</span>
         </div>
-        <div style="display:flex;gap:6px;margin-bottom:10px;flex-shrink:0">
+        <div style="display:flex;gap:6px;margin-bottom:10px">
           <input type="text" id="home-task-input" placeholder="タスクを素早く追加..." style="flex:1;font-size:12px;padding:6px 10px" onkeydown="if(event.key==='Enter')homeQuickAddTask()">
           <button class="btn btn-primary btn-sm" onclick="homeQuickAddTask()">＋</button>
         </div>
-        <div id="home-tasks" style="overflow-y:auto;flex:1;min-height:0"></div>
+        <div id="home-tasks"></div>
       </div>
 
-      <!-- 【中列下】Timer / Study 切替ウィジェット -->
-      <div class="home-panel" style="display:flex;flex-direction:column;overflow:hidden">
-        <div class="home-panel-title" style="flex-shrink:0">
-          <!-- タブ切替 -->
-          <button id="home-mid-timer-btn" onclick="setHomeMidMode('timer')"
-            style="padding:2px 10px;border-radius:10px;border:1px solid var(--gold);background:rgba(232,184,75,.18);color:var(--gold);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;font-weight:700;transition:all .15s">⏱ TIMER</button>
-          <button id="home-mid-study-btn" onclick="setHomeMidMode('study')"
-            style="padding:2px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;font-weight:700;transition:all .15s">📚 STUDY</button>
-          <span id="home-mid-detail-link" style="margin-left:auto;font-size:10px;cursor:pointer;color:var(--blue)" onclick="switchTab('timer')">詳細 →</span>
+      <!-- 【中列下】勉強クイック -->
+      <div class="home-panel">
+        <div class="home-panel-title">
+          <span class="dot" style="background:var(--purple);box-shadow:0 0 6px var(--purple)"></span>STUDY NOW
+          <span style="margin-left:auto;font-size:10px;cursor:pointer;color:var(--blue)" onclick="switchTab('study')">管理 →</span>
         </div>
-        <!-- Timer コンテンツ -->
-        <div id="home-timer-widget" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center"></div>
-        <!-- Study コンテンツ -->
-        <div id="home-study-mid" style="display:none;flex:1;min-height:0;overflow-y:auto">
-          <div id="home-study-btns-mid"></div>
-          <div id="home-study-empty-mid" style="display:none" class="empty-state">
-            <div class="emoji" style="font-size:24px">📚</div>
-            <div style="font-size:12px">勉強タブでプレイリストを登録してください</div>
-          </div>
+        <div id="home-study-btns"></div>
+        <div id="home-study-empty" style="display:none" class="empty-state">
+          <div class="emoji" style="font-size:24px">📚</div>
+          <div style="font-size:12px">勉強タブでプレイリストを登録してください</div>
         </div>
       </div>
 
-      <!-- 【右列】ニュース カード型 - span 2行 -->
-      <div class="home-panel" style="grid-row:span 2;display:flex;flex-direction:column;overflow:hidden">
-        <div class="home-panel-title" style="flex-shrink:0">
+      <!-- 【右列】ニュース カード型 -->
+      <div class="home-panel" style="grid-row:span 2;display:flex;flex-direction:column">
+        <div class="home-panel-title">
           <span class="dot" style="background:var(--orange);box-shadow:0 0 6px var(--orange)"></span>NEWS FEED
           <span id="home-news-counter" style="margin-left:6px;font-size:10px;color:var(--text3)"></span>
           <div style="margin-left:auto;display:flex;gap:4px;align-items:center">
@@ -976,13 +951,13 @@ body::after {
             <span style="font-size:10px;cursor:pointer;color:var(--blue);padding:3px 6px" onclick="switchTab('news')">詳細 →</span>
           </div>
         </div>
-        <div class="news-ticker-wrap" style="flex:1;min-height:0" id="home-news-card-wrap"></div>
-        <div style="margin-top:8px;flex-shrink:0">
+        <div class="news-ticker-wrap" style="flex:1;min-height:200px" id="home-news-card-wrap"></div>
+        <div style="margin-top:8px">
           <div style="height:2px;background:var(--border);border-radius:1px;overflow:hidden">
             <div id="news-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:1px;width:0%;transition:width linear"></div>
           </div>
         </div>
-        <div id="home-ticker-dots" style="display:flex;gap:4px;justify-content:center;margin-top:8px;flex-shrink:0"></div>
+        <div id="home-ticker-dots" style="display:flex;gap:4px;justify-content:center;margin-top:8px"></div>
       </div>
 
     </div>
@@ -1305,123 +1280,6 @@ body::after {
     </div>
   </div>
 
-  <!-- ===== TIMER TAB ===== -->
-  <div id="tab-timer" class="tab-content">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-
-      <!-- ポモドーロ / カウントダウン -->
-      <div class="card">
-        <div class="card-title">⏱ タイマー</div>
-        <div style="text-align:center;padding:16px 0">
-          <!-- モード選択 -->
-          <div style="display:flex;justify-content:center;gap:6px;margin-bottom:20px;flex-wrap:wrap">
-            <button class="filter-btn active" id="timer-mode-pomodoro" onclick="setTimerMode('pomodoro',this)">🍅 ポモドーロ 25分</button>
-            <button class="filter-btn" id="timer-mode-short" onclick="setTimerMode('short',this)">☕ 短休憩 5分</button>
-            <button class="filter-btn" id="timer-mode-long" onclick="setTimerMode('long',this)">🌿 長休憩 15分</button>
-            <button class="filter-btn" id="timer-mode-custom" onclick="setTimerMode('custom',this)">⚙ カスタム</button>
-          </div>
-          <!-- カスタム時間 -->
-          <div id="timer-custom-row" style="display:none;justify-content:center;gap:8px;margin-bottom:16px;align-items:center">
-            <input type="number" id="timer-custom-min" value="25" min="1" max="180" style="width:70px;text-align:center;font-size:16px;padding:6px">
-            <span style="color:var(--text2)">分</span>
-            <input type="number" id="timer-custom-sec" value="0" min="0" max="59" style="width:70px;text-align:center;font-size:16px;padding:6px">
-            <span style="color:var(--text2)">秒</span>
-            <button class="btn btn-secondary btn-sm" onclick="applyCustomTimer()">セット</button>
-          </div>
-          <!-- タイマー表示 -->
-          <div id="timer-display" style="font-family:'Outfit',sans-serif;font-size:72px;font-weight:700;color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:8px">25:00</div>
-          <!-- プログレスリング -->
-          <svg width="200" height="200" style="position:absolute;top:0;left:0;pointer-events:none;display:none" id="timer-ring-svg"></svg>
-          <div id="timer-label" style="font-size:13px;color:var(--text3);margin-bottom:20px">集中タイム</div>
-          <!-- コントロール -->
-          <div style="display:flex;justify-content:center;gap:12px;margin-bottom:16px">
-            <button class="btn btn-primary" id="timer-start-btn" onclick="timerStart()" style="min-width:90px">▶ スタート</button>
-            <button class="btn btn-secondary" onclick="timerReset()">↺ リセット</button>
-          </div>
-          <!-- ポモドーロカウント -->
-          <div id="pomodoro-count" style="font-size:12px;color:var(--text3)">
-            🍅 × <span id="pomodoro-num">0</span> 完了
-          </div>
-        </div>
-      </div>
-
-      <!-- ストップウォッチ -->
-      <div class="card">
-        <div class="card-title">⏲ ストップウォッチ</div>
-        <div style="text-align:center;padding:16px 0">
-          <div id="sw-display" style="font-family:'Outfit',sans-serif;font-size:64px;font-weight:700;color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:8px">00:00.0</div>
-          <div style="display:flex;justify-content:center;gap:12px;margin-bottom:20px">
-            <button class="btn btn-primary" id="sw-start-btn" onclick="swStart()" style="min-width:90px">▶ スタート</button>
-            <button class="btn btn-secondary" onclick="swLap()" id="sw-lap-btn" disabled>📌 ラップ</button>
-            <button class="btn btn-secondary" onclick="swReset()">↺ リセット</button>
-          </div>
-          <div id="sw-laps" style="max-height:200px;overflow-y:auto;text-align:left"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== DAILY TAB ===== -->
-  <div id="tab-daily" class="tab-content">
-    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px;height:calc(100vh - 120px)">
-
-      <!-- 左: 今日のサマリー -->
-      <div style="display:flex;flex-direction:column;gap:16px;min-height:0">
-
-        <!-- 達成バッジ -->
-        <div class="card" style="flex-shrink:0">
-          <div id="daily-achievement-banner" style="text-align:center;padding:12px 0">
-            <div id="daily-score-ring" style="font-size:48px;margin-bottom:4px">🌟</div>
-            <div id="daily-score-label" style="font-size:18px;font-weight:700;color:var(--gold)">今日も充実した一日！</div>
-            <div id="daily-score-sub" style="font-size:12px;color:var(--text3);margin-top:4px"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
-            <div class="stat-card"><div class="stat-num numbers" id="daily-tasks-done" style="color:var(--green)">0</div><div class="stat-label">完了タスク</div></div>
-            <div class="stat-card"><div class="stat-num numbers" id="daily-sched-count" style="color:var(--blue)">0</div><div class="stat-label">予定</div></div>
-            <div class="stat-card"><div class="stat-num numbers" id="daily-pomodoro-count" style="color:var(--orange)">0</div><div class="stat-label">🍅 ポモドーロ</div></div>
-          </div>
-        </div>
-
-        <!-- 完了したタスク一覧 -->
-        <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
-          <div class="card-title">✅ 今日完了したこと</div>
-          <div id="daily-done-list" style="overflow-y:auto;flex:1;min-height:0"></div>
-        </div>
-
-        <!-- 今日の予定 -->
-        <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
-          <div class="card-title">📍 今日の予定</div>
-          <div id="daily-sched-list" style="overflow-y:auto;flex:1;min-height:0"></div>
-        </div>
-      </div>
-
-      <!-- 右: 日記・メモ -->
-      <div style="display:flex;flex-direction:column;min-height:0">
-        <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-          <div class="card-title">
-            📓 今日の日記
-            <span id="daily-date-label" style="margin-left:8px;font-size:11px;color:var(--text3)"></span>
-            <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="saveDailyNote()">保存</button>
-          </div>
-          <textarea id="daily-note-input" placeholder="今日あったこと、感じたこと、気づき、明日やりたいことを自由に書いてください…" style="flex:1;min-height:0;resize:none;font-size:14px;line-height:1.8;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'M PLUS 1p',sans-serif"></textarea>
-          <!-- テンプレートボタン -->
-          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-            <span style="font-size:11px;color:var(--text3);align-self:center">テンプレ：</span>
-            <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('3good')">3 Good Things</button>
-            <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('reflection')">振り返り</button>
-            <button class="btn btn-secondary btn-sm" onclick="insertDailyTemplate('tomorrow')">明日の準備</button>
-          </div>
-          <!-- 過去のエントリ -->
-          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
-            <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:700">過去の記録</div>
-            <div id="daily-history" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <!-- ===== SETTINGS TAB ===== -->
   <div id="tab-settings" class="tab-content">
     <div class="card">
@@ -1468,43 +1326,23 @@ body::after {
 
       <!-- Google Calendar 連携 -->
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">📅 Google Calendar 同期</div>
-
-        <!-- ICS URL 直接取得（Pythonスクリプト不要） -->
-        <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px">
-          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🔗 方法① ICS URL（推奨・簡単）</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.7">
-            Google カレンダー → 設定 → 統合 → <strong>「非公開のアドレス（ICS形式）」</strong> をコピーして貼り付け。<br>
-            Pythonスクリプト不要。ページを開くたびに自動で今日の予定を取得します。
-          </div>
-          <div class="form-group" style="margin-bottom:8px">
-            <label>Google Calendar ICS URL</label>
-            <input type="text" id="ics-url-input" placeholder="https://calendar.google.com/calendar/ical/..." style="font-size:12px"
-              onchange="saveSetting('icsUrl',this.value.trim())">
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="syncIcsDirect()">🔄 今すぐ同期</button>
-            <span id="ics-direct-status" style="font-size:12px;color:var(--text3)"></span>
-          </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">📅 Google Calendar 自動同期</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.7">
+          一度「連携」するとトークンが保存され、次回以降はページを開くたびに自動で今日の予定を取得します。<br>
+          <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue);font-size:12px">Google Cloud Console</a> で OAuth クライアントIDを取得してください。
         </div>
-
-        <!-- OAuth（Netlifyなど本番URLが必要） -->
-        <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px">
-          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🔐 方法② Google OAuth API</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.7">
-            NetlifyなどにデプロイしたURL上でのみ動作します。<br>
-            <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue)">Google Cloud Console</a> でOAuth クライアントIDを取得してください。
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">OAuth クライアントID</div>
+            <div class="setting-desc">console.cloud.google.com → APIとサービス → 認証情報 → OAuth 2.0</div>
           </div>
-          <div class="form-group" style="margin-bottom:8px">
-            <label>OAuth クライアントID</label>
-            <input type="text" id="google-client-id-input" style="font-size:12px" placeholder="xxxx.apps.googleusercontent.com"
-              onchange="saveSetting('googleClientId',this.value.trim())">
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-secondary btn-sm" onclick="connectGoogleCalendar()">🔗 OAuth で連携</button>
-            <button class="btn btn-secondary btn-sm" id="gcal-disconnect-btn" onclick="disconnectGoogleCalendar()" style="display:none">🔌 連携解除</button>
-            <span id="gcal-status" style="font-size:12px;color:var(--text3)"></span>
-          </div>
+          <input type="text" id="google-client-id-input" style="width:260px;font-size:12px" placeholder="xxxx.apps.googleusercontent.com"
+            onchange="saveSetting('googleClientId',this.value.trim())">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="connectGoogleCalendar()">🔗 Google Calendar に連携</button>
+          <button class="btn btn-secondary btn-sm" id="gcal-disconnect-btn" onclick="disconnectGoogleCalendar()" style="display:none">🔌 連携解除</button>
+          <span id="gcal-status" style="font-size:12px;color:var(--text3)"></span>
         </div>
       </div>
 
@@ -1691,25 +1529,24 @@ function switchTab(id) {
   next.classList.add('active','cyber-enter');
   setTimeout(() => next.classList.remove('cyber-enter'), 400);
 
-  const tabMap = { home:'HOME', today:'今日', weekly:'毎週', news:'ニュース', study:'勉強', timer:'タイマー', daily:'Daily', settings:'設定' };
+  const tabMap = { home:'HOME', today:'今日', weekly:'毎週', news:'ニュース', study:'勉強', settings:'設定' };
   document.querySelectorAll('.tab-btn').forEach(b => {
     if(tabMap[id] && b.textContent.includes(tabMap[id])) b.classList.add('active');
   });
 
   if(id==='home')     renderHome();
   if(id==='weekly')   renderWeekly();
-  if(id==='today') {
-    renderTimeline();
-    renderTasks(currentFilter);
-    updateProgress();
-    renderCategoryFilterChips();
-    renderCategoryInputChips();
+  //if(id==='today')    { requestAnimationFrame(() => { renderTimeline(); renderTasks(currentFilter); updateProgress(); renderCategoryFilterChips(); renderCategoryInputChips(); }); }
+  if(id==='today') { 
+    renderTimeline(); 
+    renderTasks(currentFilter); 
+    updateProgress(); 
+    renderCategoryFilterChips(); 
+    renderCategoryInputChips(); 
   }
   if(id==='study')    renderPlaylists();
   if(id==='news')     { renderNewsList(); checkApiKeyNotice(); }
   if(id==='settings') loadSettings();
-  if(id==='timer')    renderTimerTab();
-  if(id==='daily')    renderDailyTab();
 }
 
 function toggleAddForm(id) {
@@ -1868,36 +1705,25 @@ function renderTimeline() {
     </div>`;
   }
 
-  // Free slots — only show gaps from NOW onwards (past free time is not actionable)
-  const freeStart = Math.max(gridStart, nowMin); // start from current time
-  let cursor = freeStart;
-  // Fast-forward cursor past events that already ended
+  // Free slots
+  let cursor = gridStart;
   for(const item of sorted) {
     const s = timeToMins(item.time);
     if(s===null) continue;
     const e = item.end ? Math.min(timeToMins(item.end), gridEnd) : s+60;
-    if(e > freeStart) {
-      if(s <= freeStart) cursor = Math.max(cursor, e); // currently in an event
-    }
-  }
-  // Now walk forward
-  for(const item of sorted) {
-    const s = timeToMins(item.time);
-    if(s===null || s < cursor) continue;
-    const e = item.end ? Math.min(timeToMins(item.end), gridEnd) : s+60;
     if(s - cursor >= 30) {
       const topPx=(cursor-gridStart)*PX_PER_MIN, hPx=(s-cursor)*PX_PER_MIN, mins=s-cursor;
       const hrs=Math.floor(mins/60),rem=mins%60;
-      const freeLabel = hPx>=14 ? (hrs>0 ? '空き '+hrs+'時間'+(rem?rem+'分':'') : '空き '+mins+'分') : '';
-      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:60px;right:2px">${freeLabel}</div>`;
+      const label=hPx>=14?(hrs>0?`空き ${hrs}時間${rem?rem+'分':''}` :`空き ${mins}分`):'';
+      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:60px;right:2px">${label}</div>`;
     }
     cursor=Math.max(cursor,e);
   }
   if(gridEnd-cursor>=30){
     const topPx=(cursor-gridStart)*PX_PER_MIN,hPx=(gridEnd-cursor)*PX_PER_MIN,mins=gridEnd-cursor;
     const hrs=Math.floor(mins/60),rem=mins%60;
-    const lastLabel=hPx>=14?('空き '+(hrs>0?hrs+'時間'+(rem?rem+'分':''):mins+'分')+' (残り)'):'';
-    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:60px;right:2px">${lastLabel}</div>`;
+    const label=hPx>=14?`空き ${hrs>0?hrs+'時間'+(rem?rem+'分':''):mins+'分'}`:'';
+    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:60px;right:2px">${label}</div>`;
   }
 
   html += '</div>';
@@ -1913,16 +1739,16 @@ function delSchedule(id) {
 
 // ==================== HOME TAB ====================
 function renderHome() {
+  // 現在時刻バッジ更新
   const nowBadge = document.getElementById('home-now-time');
   if(nowBadge) {
     const n = new Date();
     nowBadge.textContent = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')} 現在`;
   }
-  setHomeSchedMode(_homeSchedMode);
-  setHomeMidMode(_homeMidMode);
+  renderHomeSchedule();
   renderHomeTasks();
+  renderHomeStudy();
   renderHomeTicker();
-  updateHomeFreeBadge();
 }
 
 function renderHomeSchedule() {
@@ -2142,15 +1968,18 @@ function loadTheme() {
 function toggleTheme() { cycleTheme(); }
 
 function renderHomeStudy() {
-  // Original home-study-btns (no longer in DOM, kept for compat)
   const el = document.getElementById('home-study-btns');
   const emEl = document.getElementById('home-study-empty');
-  // New mid-panel study slot
-  const midEl = document.getElementById('home-study-btns-mid');
-  const midEmEl = document.getElementById('home-study-empty-mid');
-
+  if(!el) return;
   const items = getPlaylists();
-  const studyHTML = items.map(p=>`
+  if(!items.length) {
+    el.style.display='none';
+    if(emEl) emEl.style.display='block';
+    return;
+  }
+  if(emEl) emEl.style.display='none';
+  el.style.display='block';
+  el.innerHTML = items.map(p=>`
     <a href="${p.url}" target="_blank" class="study-quick-btn">
       <div class="study-quick-icon">▶</div>
       <div>
@@ -2159,15 +1988,6 @@ function renderHomeStudy() {
       </div>
       <div style="margin-left:auto;font-size:10px;color:var(--text3)">START →</div>
     </a>`).join('');
-
-  if(el) {
-    if(!items.length) { el.style.display='none'; if(emEl) emEl.style.display='block'; }
-    else { el.style.display='block'; if(emEl) emEl.style.display='none'; el.innerHTML = studyHTML; }
-  }
-  if(midEl) {
-    if(!items.length) { midEl.style.display='none'; if(midEmEl) midEmEl.style.display='block'; }
-    else { midEl.style.display='block'; if(midEmEl) midEmEl.style.display='none'; midEl.innerHTML = studyHTML; }
-  }
 }
 
 // ── News Card Ticker ──
@@ -2963,8 +2783,6 @@ function loadSettings() {
   // Google Calendar
   const gcalInput = document.getElementById('google-client-id-input');
   if(gcalInput) gcalInput.value = s.googleClientId || '';
-  const icsInput = document.getElementById('ics-url-input');
-  if(icsInput) icsInput.value = s.icsUrl || '';
   _updateDisconnectBtn(!!_getToken());
   if(_getToken()) _updateGcalStatus('🔗 連携済み (自動同期ON)');
   // Advanced toggles
@@ -3060,7 +2878,7 @@ function loadCalendarSyncData() {
   saveSchedule(merged);
   renderTimeline();
   renderHome();
-  statusEl.textContent = `✅ ${window.CALENDAR_SYNC_STATUS || (calEvents.length + '件同期済み')}`;
+  statusEl.textContent = `✅ ${window.CALENDAR_SYNC_STATUS || `${calEvents.length}件同期済み`}`;
 }
 
 function showSyncHelp() {
@@ -3184,128 +3002,6 @@ function parseIcsFile(file) {
   reader.readAsText(file, 'UTF-8');
 }
 
-// ==================== ICS DIRECT SYNC (Python不要) ====================
-// CORSプロキシ経由でブラウザから直接ICSを取得する
-
-const CORS_PROXY = 'https://corsproxy.io/?';
-
-async function syncIcsDirect(silent = false) {
-  const url = getSettings().icsUrl?.trim();
-  const statusEl = document.getElementById('ics-direct-status');
-  const syncEl   = document.getElementById('sync-status-text');
-
-  if(!url) {
-    if(!silent) {
-      if(statusEl) statusEl.textContent = '❌ ICS URLを入力してください';
-    }
-    return false;
-  }
-
-  if(statusEl) statusEl.textContent = '⏳ 取得中...';
-  if(syncEl)   syncEl.textContent   = '🔄 カレンダー同期中...';
-
-  try {
-    const proxyUrl = CORS_PROXY + encodeURIComponent(url);
-    const res = await fetch(proxyUrl);
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const icsText = await res.text();
-
-    const events = _parseIcsToday(icsText);
-
-    // 手動追加分を残してICS由来を置き換え
-    const manual = getSchedule().filter(e => e.syncSource !== 'ics');
-    const merged = [...manual, ...events];
-    merged.sort((a,b) => {
-      if(!a.time && !b.time) return 0;
-      if(!a.time) return 1;
-      if(!b.time) return -1;
-      return a.time.localeCompare(b.time);
-    });
-    saveSchedule(merged);
-    renderTimeline();
-    renderHome();
-
-    const now = new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'});
-    const msg = events.length
-      ? `✅ ICS同期: ${events.length}件取得 (${now})`
-      : `📅 ICS同期: 今日の予定なし (${now})`;
-    if(statusEl) statusEl.textContent = msg;
-    if(syncEl)   syncEl.textContent   = msg;
-    return true;
-
-  } catch(err) {
-    const msg = `❌ ICS取得失敗: ${err.message}`;
-    if(statusEl) statusEl.textContent = msg;
-    if(syncEl)   syncEl.textContent   = msg;
-    console.error('[ICS sync]', err);
-    return false;
-  }
-}
-
-function _parseIcsToday(icsText) {
-  // ICS折り返し行を展開
-  icsText = icsText.replace(/\r?\n[ \t]/g, '');
-
-  const today = todayKey(); // YYYY-MM-DD (ローカル MYT)
-  const events = [];
-
-  const utcToLocal = (dateStr, timeStr) => {
-    const h = parseInt(timeStr.slice(0,2)), m = parseInt(timeStr.slice(3,5));
-    const y = parseInt(dateStr.slice(0,4)), mo = parseInt(dateStr.slice(5,7))-1, d = parseInt(dateStr.slice(8,10));
-    const dt = new Date(Date.UTC(y, mo, d, h, m));
-    return {
-      date: `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`,
-      time: `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`,
-    };
-  };
-
-  const parseDT = (val, params) => {
-    if(!val) return null;
-    // 終日
-    if((params && params.includes('VALUE=DATE')) || /^\d{8}$/.test(val)) {
-      return { date:`${val.slice(0,4)}-${val.slice(4,6)}-${val.slice(6,8)}`, time:'00:00', allday:true };
-    }
-    const isUtc = val.endsWith('Z');
-    const clean = val.replace(/[TZ]/g, '');
-    const dateStr = `${clean.slice(0,4)}-${clean.slice(4,6)}-${clean.slice(6,8)}`;
-    const timeStr = `${clean.slice(8,10)||'00'}:${clean.slice(10,12)||'00'}`;
-    if(isUtc) {
-      const conv = utcToLocal(dateStr, timeStr);
-      return { date: conv.date, time: conv.time, allday: false };
-    }
-    return { date: dateStr, time: timeStr, allday: false };
-  };
-
-  const blocks = icsText.split('BEGIN:VEVENT');
-  for(const block of blocks.slice(1)) {
-    const getVal = (key) => {
-      const m = block.match(new RegExp(`^(${key}[^:\\r\\n]*):([^\\r\\n]*)`, 'm'));
-      return m ? { val: m[2].trim(), params: m[1] } : { val:'', params:'' };
-    };
-
-    const summary = getVal('SUMMARY').val || '(無題)';
-    const ds      = getVal('DTSTART');
-    const de      = getVal('DTEND');
-
-    const start = parseDT(ds.val, ds.params);
-    if(!start || start.date !== today) continue;
-
-    const end = parseDT(de.val, de.params);
-
-    events.push({
-      id:         Math.abs((summary + start.date + start.time).split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % 999999,
-      time:       start.allday ? '' : start.time,
-      end:        (end && !end.allday) ? end.time : '',
-      title:      summary,
-      color:      'blue',
-      syncSource: 'ics',
-    });
-  }
-
-  events.sort((a,b) => (a.time||'').localeCompare(b.time||''));
-  return events;
-}
-
 // ==================== GOOGLE CALENDAR AUTO-SYNC ====================
 // トークンは localStorage に保存。ページを開くたびに自動で同期する。
 
@@ -3391,18 +3087,11 @@ function _updateDisconnectBtn(connected) {
   if(btn) btn.style.display = connected ? 'inline-block' : 'none';
 }
 
-// ── 自動同期（ページロード時）── ICS → OAuth の順で試みる
+// ── 自動同期（ページロード時） ──
 async function autoSyncGoogleCalendar() {
-  // 方法①: ICS URL が設定されていればそちらを優先
-  const icsUrl = getSettings().icsUrl?.trim();
-  if(icsUrl) {
-    await syncIcsDirect(true);
-    return;
-  }
-  // 方法②: OAuth トークンがあれば使う
   const token    = _getToken();
   const clientId = getSettings().googleClientId?.trim();
-  if(!token || !clientId) return;
+  if(!token || !clientId) return; // 未連携 → スキップ
   _updateGcalStatus('🔄 Googleカレンダー同期中...');
   _updateDisconnectBtn(true);
   await fetchGoogleCalendarEvents(token);
@@ -3483,386 +3172,7 @@ async function fetchGoogleCalendarEvents(token) {
   }
 }
 
-// ==================== HOME SCHEDULE MODE ====================
-let _homeSchedMode = localStorage.getItem('homeSchedMode') || 'list';
-let _homeMidMode   = localStorage.getItem('homeMidMode')  || 'timer';
-
-function setHomeMidMode(mode) {
-  _homeMidMode = mode;
-  localStorage.setItem('homeMidMode', mode);
-
-  const timerBtn = document.getElementById('home-mid-timer-btn');
-  const studyBtn = document.getElementById('home-mid-study-btn');
-  const timerEl  = document.getElementById('home-timer-widget');
-  const studyEl  = document.getElementById('home-study-mid');
-  const detailLnk = document.getElementById('home-mid-detail-link');
-
-  const activeStyle  = (color, bg) => { return { border:'1px solid '+color, background:bg, color:color }; };
-
-  if(mode === 'timer') {
-    if(timerBtn) { timerBtn.style.borderColor='var(--gold)'; timerBtn.style.background='rgba(232,184,75,.18)'; timerBtn.style.color='var(--gold)'; }
-    if(studyBtn) { studyBtn.style.borderColor='var(--border)'; studyBtn.style.background='transparent'; studyBtn.style.color='var(--text3)'; }
-    if(timerEl)  timerEl.style.display = 'flex';
-    if(studyEl)  studyEl.style.display = 'none';
-    if(detailLnk) { detailLnk.textContent='詳細 →'; detailLnk.onclick=()=>switchTab('timer'); }
-    renderHomeTimerWidget();
-  } else {
-    if(timerBtn) { timerBtn.style.borderColor='var(--border)'; timerBtn.style.background='transparent'; timerBtn.style.color='var(--text3)'; }
-    if(studyBtn) { studyBtn.style.borderColor='var(--purple)'; studyBtn.style.background='rgba(167,139,250,.18)'; studyBtn.style.color='var(--purple)'; }
-    if(timerEl)  timerEl.style.display = 'none';
-    if(studyEl)  studyEl.style.display = 'block';
-    if(detailLnk) { detailLnk.textContent='管理 →'; detailLnk.onclick=()=>switchTab('study'); }
-    renderHomeStudy();
-  }
-}
-
-function setHomeSchedMode(mode) {
-  _homeSchedMode = mode;
-  localStorage.setItem('homeSchedMode', mode);
-  const listBtn = document.getElementById('home-sched-list-btn');
-  const tlBtn   = document.getElementById('home-sched-tl-btn');
-  const listEl  = document.getElementById('home-schedule');
-  const tlEl    = document.getElementById('home-timeline-mini');
-  const active  = 'rgba(74,158,255,.18)';
-  const inactive = 'transparent';
-  if(mode === 'list') {
-    if(listBtn) { listBtn.style.background=active; listBtn.style.borderColor='var(--blue)'; listBtn.style.color='var(--blue)'; }
-    if(tlBtn)   { tlBtn.style.background=inactive; tlBtn.style.borderColor='var(--border)'; tlBtn.style.color='var(--text3)'; }
-    if(listEl)  listEl.style.display = 'block';
-    if(tlEl)    tlEl.style.display   = 'none';
-    renderHomeSchedule();
-  } else {
-    if(listBtn) { listBtn.style.background=inactive; listBtn.style.borderColor='var(--border)'; listBtn.style.color='var(--text3)'; }
-    if(tlBtn)   { tlBtn.style.background=active; tlBtn.style.borderColor='var(--blue)'; tlBtn.style.color='var(--blue)'; }
-    if(listEl)  listEl.style.display = 'none';
-    if(tlEl)    tlEl.style.display   = 'block';
-    renderHomeMiniTimeline();
-  }
-}
-
-function renderHomeMiniTimeline() {
-  const el = document.getElementById('home-timeline-mini');
-  if(!el) return;
-  // Re-use full timeline renderer but render into home-timeline-mini
-  const origContainer = document.getElementById('timeline-container');
-  // Temporarily swap container for measurement
-  const h = el.offsetHeight || 400;
-  const allItems = getSchedule();
-  const items = allItems.filter(i => !!i.time);
-  const now = new Date(), nowMin = now.getHours()*60+now.getMinutes();
-  let gridStart = 6*60, gridEnd = 23*60+30;
-  for(const item of items) {
-    const s = timeToMins(item.time);
-    if(s !== null) gridStart = Math.min(gridStart, s);
-    const e = item.end ? timeToMins(item.end) : (s||0)+60;
-    if(e) gridEnd = Math.max(gridEnd, e);
-  }
-  gridStart = Math.floor(gridStart/60)*60;
-  gridEnd   = Math.ceil(gridEnd/60)*30*2;
-  const totalMins = gridEnd - gridStart;
-  const TOTAL_H = Math.max(h - 4, 200);
-  const PPM = TOTAL_H / totalMins;
-
-  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:48px;overflow:hidden">`;
-  if(nowMin >= gridStart && nowMin <= gridEnd) {
-    html += `<div style="position:absolute;left:0;right:0;top:${(nowMin-gridStart)*PPM}px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold));z-index:5;pointer-events:none"></div>`;
-  }
-  for(let h2=Math.floor(gridStart/60); h2<=Math.ceil(gridEnd/60); h2++) {
-    const t = (h2*60-gridStart)*PPM;
-    if(t > TOTAL_H+1) break;
-    html += `<div style="position:absolute;left:0;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
-    html += `<div style="position:absolute;left:0;width:44px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-7px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3)">${String(h2).padStart(2,'0')}:00</div>`;
-  }
-  const sorted = [...items].sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
-  // Simple column layout
-  const cols = [], itemCols = [], itemSpans = [];
-  for(const item of sorted) {
-    const s = timeToMins(item.time)||0, e = item.end ? timeToMins(item.end) : s+60;
-    let a=-1; for(let c=0;c<cols.length;c++){if(cols[c]<=s){a=c;cols[c]=e;break;}} if(a===-1){a=cols.length;cols.push(e);}
-    itemCols.push(a);
-  }
-  for(let i=0;i<sorted.length;i++){
-    const s=timeToMins(sorted[i].time)||0,e=sorted[i].end?timeToMins(sorted[i].end):s+60;
-    let mx=itemCols[i]; for(let j=0;j<sorted.length;j++){const s2=timeToMins(sorted[j].time)||0,e2=sorted[j].end?timeToMins(sorted[j].end):s2+60;if(s2<e&&e2>s)mx=Math.max(mx,itemCols[j]);} itemSpans.push(mx+1);
-  }
-  for(let i=0;i<sorted.length;i++){
-    const item=sorted[i],sm=timeToMins(item.time);
-    if(!sm) continue;
-    const em=item.end?timeToMins(item.end):sm+60,safEnd=Math.min(em,gridEnd);
-    const top=(sm-gridStart)*PPM,ht=Math.max((safEnd-sm)*PPM,16);
-    const c=colorMap[item.color]||'#4a9eff',col=itemCols[i],tot=itemSpans[i];
-    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(48px + (100% - 52px)*${col/tot});width:calc((100% - 52px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
-  }
-  // Free time from now
-  const freeStart=Math.max(gridStart,nowMin);
-  let cur=freeStart;
-  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+Math.max(hp,2)+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}cur=Math.max(cur,e);}
-  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+hp+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}
-  html += '</div>';
-  el.innerHTML = html;
-}
-
-// ── Free time badge update ──
-function updateHomeFreeBadge() {
-  const el = document.getElementById('home-free-badge');
-  const txt = document.getElementById('home-free-text');
-  if(!el || !txt) return;
-  const nowMin = new Date().getHours()*60 + new Date().getMinutes();
-  const items = getSchedule().filter(i=>i.time).sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
-  const gridEnd = 23*60+30;
-  let cur = nowMin;
-  for(const item of items){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?timeToMins(item.end):s+60;if(s<=cur)cur=Math.max(cur,e);}
-  // Walk to find next free block end
-  let freeUntil = gridEnd;
-  for(const item of items){const s=timeToMins(item.time);if(!s||s<cur)continue;if(s>cur){freeUntil=s;break;}cur=Math.max(cur,item.end?timeToMins(item.end):s+60);}
-  const freeMin = freeUntil - cur;
-  if(freeMin >= 30) {
-    const hrs=Math.floor(freeMin/60),rem=freeMin%60;
-    txt.textContent = `⏳ 空き ${hrs>0?hrs+'時間'+(rem?rem+'分':''):freeMin+'分'}`;
-    el.style.display = 'block';
-  } else {
-    el.style.display = 'none';
-  }
-}
-
-// ==================== TIMER ====================
-let timerInterval = null, timerRemaining = 25*60, timerTotal = 25*60, timerRunning = false;
-let timerMode = 'pomodoro';
-let pomodoroCount = parseInt(localStorage.getItem('pomodoroCount')||'0');
-const TIMER_MODES = { pomodoro:{secs:25*60,label:'集中タイム 🍅'}, short:{secs:5*60,label:'短休憩 ☕'}, long:{secs:15*60,label:'長休憩 🌿'}, custom:{secs:25*60,label:'カスタム ⚙'} };
-
-function setTimerMode(mode, btn) {
-  timerMode = mode;
-  document.querySelectorAll('[id^="timer-mode-"]').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  const customRow = document.getElementById('timer-custom-row');
-  if(customRow) customRow.style.display = mode==='custom' ? 'flex' : 'none';
-  if(mode !== 'custom') {
-    timerTotal = timerRemaining = TIMER_MODES[mode].secs;
-    timerRunning = false;
-    clearInterval(timerInterval);
-    renderTimerDisplay();
-    const lbl = document.getElementById('timer-label');
-    if(lbl) lbl.textContent = TIMER_MODES[mode].label;
-  }
-}
-
-function applyCustomTimer() {
-  const m = parseInt(document.getElementById('timer-custom-min')?.value||'25');
-  const s = parseInt(document.getElementById('timer-custom-sec')?.value||'0');
-  timerTotal = timerRemaining = m*60+s;
-  timerRunning = false; clearInterval(timerInterval);
-  renderTimerDisplay();
-}
-
-function renderTimerDisplay() {
-  const m = Math.floor(timerRemaining/60), s = timerRemaining%60;
-  const el = document.getElementById('timer-display');
-  if(el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  const btn = document.getElementById('timer-start-btn');
-  if(btn) btn.textContent = timerRunning ? '⏸ 一時停止' : (timerRemaining<timerTotal ? '▶ 再開' : '▶ スタート');
-  renderHomeTimerWidget();
-}
-
-function timerStart() {
-  if(timerRunning) { clearInterval(timerInterval); timerRunning=false; renderTimerDisplay(); return; }
-  timerRunning = true;
-  timerInterval = setInterval(()=>{
-    if(timerRemaining<=0) {
-      clearInterval(timerInterval); timerRunning=false;
-      if(timerMode==='pomodoro'){ pomodoroCount++; localStorage.setItem('pomodoroCount',pomodoroCount); const pc=document.getElementById('pomodoro-num');if(pc)pc.textContent=pomodoroCount; }
-      renderTimerDisplay();
-      try{ new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAA...').play().catch(()=>{}); }catch(e){}
-      if(Notification.permission==='granted') new Notification('⏱ タイマー終了！',{body: TIMER_MODES[timerMode]?.label+' が終わりました'});
-      return;
-    }
-    timerRemaining--;
-    renderTimerDisplay();
-  },1000);
-  renderTimerDisplay();
-  if(Notification.permission==='default') Notification.requestPermission();
-}
-
-function timerReset() {
-  clearInterval(timerInterval); timerRunning=false;
-  timerRemaining = timerTotal;
-  renderTimerDisplay();
-}
-
-function renderTimerTab() {
-  const pc = document.getElementById('pomodoro-num'); if(pc) pc.textContent=pomodoroCount;
-  setTimerMode(timerMode, document.getElementById(`timer-mode-${timerMode}`));
-  renderTimerDisplay();
-  // Init stopwatch display
-  swUpdateDisplay();
-}
-
-function renderHomeTimerWidget() {
-  const el = document.getElementById('home-timer-widget');
-  if(!el) return;
-  const m = Math.floor(timerRemaining/60), s = timerRemaining%60;
-  const pct = timerTotal > 0 ? ((timerTotal-timerRemaining)/timerTotal)*100 : 0;
-  const modeLabel = TIMER_MODES[timerMode]?.label || 'タイマー';
-  el.innerHTML = `
-    <div style="text-align:center">
-      <div style="font-family:'Outfit',sans-serif;font-size:44px;font-weight:700;color:${timerRunning?'var(--gold)':'var(--text)'};line-height:1;margin-bottom:4px">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:10px">${modeLabel}</div>
-      <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:12px">
-        <div style="height:100%;background:linear-gradient(90deg,var(--gold),var(--orange));border-radius:2px;width:${pct}%;transition:width .5s"></div>
-      </div>
-      <div style="display:flex;justify-content:center;gap:8px">
-        <button class="btn btn-primary btn-sm" onclick="timerStart()">${timerRunning?'⏸':'▶'}</button>
-        <button class="btn btn-secondary btn-sm" onclick="timerReset()">↺</button>
-        <span style="font-size:11px;color:var(--text3);align-self:center">🍅×${pomodoroCount}</span>
-      </div>
-    </div>`;
-}
-
-// ── Stopwatch ──
-let swMs=0, swRunning=false, swInterval=null, swLaps=[], swStart2=0;
-function swStart(){
-  if(swRunning){clearInterval(swInterval);swRunning=false;document.getElementById('sw-start-btn').textContent='▶ スタート';return;}
-  swRunning=true; swStart2=Date.now()-swMs;
-  swInterval=setInterval(()=>{swMs=Date.now()-swStart2;swUpdateDisplay();},100);
-  document.getElementById('sw-start-btn').textContent='⏸ 一時停止';
-  document.getElementById('sw-lap-btn').disabled=false;
-}
-function swLap(){
-  swLaps.unshift({n:swLaps.length+1,ms:swMs});
-  const el=document.getElementById('sw-laps');
-  if(el) el.innerHTML=swLaps.map(l=>`<div style="display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:13px"><span style="color:var(--text3)">Lap ${l.n}</span><span>${_fmtSw(l.ms)}</span></div>`).join('');
-}
-function swReset(){clearInterval(swInterval);swRunning=false;swMs=0;swLaps=[];swUpdateDisplay();document.getElementById('sw-start-btn').textContent='▶ スタート';document.getElementById('sw-lap-btn').disabled=true;const el=document.getElementById('sw-laps');if(el)el.innerHTML='';}
-function swUpdateDisplay(){const el=document.getElementById('sw-display');if(el)el.textContent=_fmtSw(swMs);}
-function _fmtSw(ms){const s=Math.floor(ms/1000),m=Math.floor(s/60),t=Math.floor((ms%1000)/100);return `${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}.${t}`;}
-
-// ==================== DAILY TAB ====================
-function getDailyNotes(){ return DB.get('daily_notes') || {}; }
-function saveDailyNotes(n){ DB.set('daily_notes', n); }
-
-function renderDailyTab() {
-  const today = todayKey();
-  const notes = getDailyNotes();
-
-  // Date label
-  const lbl = document.getElementById('daily-date-label');
-  if(lbl){ const d=new Date(); const days=['日','月','火','水','木','金','土']; lbl.textContent=`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`; }
-
-  // Load note
-  const noteEl = document.getElementById('daily-note-input');
-  if(noteEl) noteEl.value = notes[today] || '';
-
-  // Stats
-  const tasks = getTasks();
-  const todayDone = tasks.filter(t=>t.done&&(t.scope==='today'||t.deadline===today||t.created===today));
-  const sched = getSchedule().filter(i=>i.time);
-  const pc = parseInt(localStorage.getItem('pomodoroCount')||'0');
-
-  const dEl=document.getElementById('daily-tasks-done'); if(dEl) dEl.textContent=todayDone.length;
-  const sEl=document.getElementById('daily-sched-count'); if(sEl) sEl.textContent=sched.length;
-  const pEl=document.getElementById('daily-pomodoro-count'); if(pEl) pEl.textContent=pc;
-
-  // Achievement label
-  const score = todayDone.length + sched.length + pc;
-  const banner = document.getElementById('daily-score-label');
-  const ring   = document.getElementById('daily-score-ring');
-  const sub    = document.getElementById('daily-score-sub');
-  const msgs = [
-    [0, '😴', '今日はゆっくり休む日', 'また明日頑張ろう！'],
-    [2, '🌱', 'スタートが切れた！', '小さな一歩が積み重なる'],
-    [4, '⚡', '順調に進んでいる', 'この調子で続けよう！'],
-    [7, '🔥', '充実した一日！', 'すごい集中力だ！'],
-    [10, '🌟', '完璧な一日！', '今日は胸を張って休もう！'],
-  ];
-  const m = [...msgs].reverse().find(([s])=>score>=s) || msgs[0];
-  if(ring) ring.textContent=m[1]; if(banner) banner.textContent=m[2]; if(sub) sub.textContent=m[3];
-
-  // Completed tasks
-  const doneEl = document.getElementById('daily-done-list');
-  if(doneEl) {
-    if(!todayDone.length) {
-      doneEl.innerHTML='<div class="empty-state" style="padding:16px"><div class="emoji">✨</div>タスクを完了するとここに表示されます</div>';
-    } else {
-      doneEl.innerHTML = todayDone.map(t=>`
-        <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)">
-          <span style="color:var(--green);font-size:14px">✓</span>
-          <span style="font-size:13px;text-decoration:line-through;color:var(--text2)">${t.title}</span>
-          ${t.category?`<span class="badge badge-date">${t.category}</span>`:''}
-        </div>`).join('');
-    }
-  }
-
-  // Schedule
-  const schedEl = document.getElementById('daily-sched-list');
-  if(schedEl) {
-    if(!sched.length) {
-      schedEl.innerHTML='<div style="font-size:12px;color:var(--text3);text-align:center;padding:12px">予定なし</div>';
-    } else {
-      schedEl.innerHTML = sched.map(item=>{
-        const c=colorMap[item.color]||'#4a9eff';
-        return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
-          <div style="width:8px;height:8px;border-radius:50%;background:${c};flex-shrink:0"></div>
-          <span style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);width:40px">${item.time}</span>
-          <span style="font-size:13px">${item.title}</span>
-        </div>`;
-      }).join('');
-    }
-  }
-
-  // History
-  const histEl = document.getElementById('daily-history');
-  if(histEl) {
-    const keys = Object.keys(notes).sort().reverse().slice(0,14);
-    histEl.innerHTML = keys.map(k=>`
-      <button onclick="loadDailyNote('${k}')" style="padding:4px 10px;border-radius:10px;border:1px solid ${k===today?'var(--blue)':'var(--border)'};background:${k===today?'rgba(74,158,255,.15)':'transparent'};color:${k===today?'var(--blue)':'var(--text3)'};font-size:11px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s">${k.slice(5)}</button>`).join('');
-  }
-}
-
-function loadDailyNote(dateKey) {
-  const notes = getDailyNotes();
-  const noteEl = document.getElementById('daily-note-input');
-  const lbl = document.getElementById('daily-date-label');
-  if(noteEl) noteEl.value = notes[dateKey] || '';
-  if(lbl) { const p=dateKey.split('-'); lbl.textContent=`${p[0]}年${p[1]}月${p[2]}日`; }
-  // Highlight selected
-  const today = todayKey();
-  document.querySelectorAll('#daily-history button').forEach(b=>{
-    const isSelected = b.textContent===dateKey.slice(5);
-    b.style.borderColor = isSelected?'var(--blue)':'var(--border)';
-    b.style.color = isSelected?'var(--blue)':'var(--text3)';
-    b.style.background = isSelected?'rgba(74,158,255,.15)':'transparent';
-  });
-}
-
-function saveDailyNote() {
-  const today = todayKey();
-  const notes = getDailyNotes();
-  const val = document.getElementById('daily-note-input')?.value || '';
-  if(val.trim()) notes[today] = val;
-  else delete notes[today];
-  saveDailyNotes(notes);
-  renderDailyTab();
-  // Flash save feedback
-  const btn = event.currentTarget;
-  const orig = btn.textContent;
-  btn.textContent = '✅ 保存済み';
-  setTimeout(()=>btn.textContent=orig, 1500);
-}
-
-function insertDailyTemplate(type) {
-  const templates = {
-    '3good': `【今日の3 Good Things】\n1. \n2. \n3. \n\n【明日やりたいこと】\n`,
-    'reflection': `【今日のKPT振り返り】\n\n✅ Keep（続けたいこと）\n\n🔄 Problem（課題・反省）\n\n💡 Try（次に試すこと）\n`,
-    'tomorrow': `【明日の準備】\n\n📌 最重要タスク\n1. \n\n📋 やること\n- \n- \n\n⚠️ 忘れずに\n`,
-  };
-  const el = document.getElementById('daily-note-input');
-  if(!el) return;
-  const cur = el.value;
-  el.value = cur + (cur&&!cur.endsWith('\n')?'\n\n':'') + templates[type];
-  el.focus();
-}
-
-
+// ==================== INIT ====================
 window.addEventListener('DOMContentLoaded', () => {
   loadTheme();
   initClock();
