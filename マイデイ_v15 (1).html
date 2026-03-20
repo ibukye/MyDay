@@ -744,15 +744,14 @@ body::after {
 }
 
 /* ── FULL-DAY TIMELINE GRID ── */
-.timeline-grid { position:relative;padding-left:72px;overflow:visible; }
+.timeline-grid { position:relative;padding-left:56px;overflow:visible; }
 .tg-hour-label {
-  position:absolute;left:0;width:68px;text-align:right;padding-right:4px;
+  position:absolute;left:0;width:52px;text-align:right;padding-right:6px;
   font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);
   transform:translateY(-7px);pointer-events:none;z-index:2;
-  display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;
 }
 .tg-now-line {
-  position:absolute;left:-72px;right:0;height:2px;
+  position:absolute;left:-56px;right:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--gold),var(--gold));
   z-index:5;pointer-events:none;
 }
@@ -1382,7 +1381,6 @@ body::after {
           <div style="display:flex;justify-content:center;gap:12px;margin-bottom:16px">
             <button class="btn btn-primary" id="timer-start-btn" onclick="timerStart()" style="min-width:90px">▶ スタート</button>
             <button class="btn btn-secondary" onclick="timerReset()">↺ リセット</button>
-            <button class="btn btn-secondary" onclick="enterFocusMode()" title="集中モードで全画面表示" style="font-size:13px">🎯</button>
           </div>
           <!-- ポモドーロカウント -->
           <div id="pomodoro-count" style="font-size:12px;color:var(--text3)">
@@ -1448,14 +1446,6 @@ body::after {
           <div id="daily-weekly-labels" style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text3);font-family:'Outfit',sans-serif"></div>
         </div>
 
-        <!-- 週間レビュー -->
-        <div class="card" style="flex-shrink:0">
-          <div class="card-title" style="cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-            📊 週間レビュー <span style="font-size:11px;color:var(--text3);font-weight:400">▾</span>
-          </div>
-          <div id="daily-weekly-review"></div>
-        </div>
-
         <!-- 完了したタスク一覧 -->
         <div class="card" style="flex:1;min-height:100px;display:flex;flex-direction:column">
           <div class="card-title" style="flex-shrink:0">✅ 今日完了したこと</div>
@@ -1516,19 +1506,9 @@ body::after {
         </div>
       </div>
 
-      <!-- UTM 大学休日マーク -->
-      <div class="setting-row" id="utm-holiday-row" style="display:none">
-        <div>
-          <div class="setting-label">UTM ジム休業日</div>
-          <div class="setting-desc" id="utm-holiday-desc">今日を大学休日（ジム休み）としてマーク</div>
-        </div>
-        <button id="utm-holiday-btn" onclick="toggleUtmHoliday()"
-          style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">休業日にする</button>
-      </div>
-
       <div class="setting-row">
         <div>
-          <div class="setting-label">就寝リマインダー時間</div>
+          <div class="setting-label">就寝リマインダー</div>
           <div class="setting-desc">この時間以降に警告バナーを表示します</div>
         </div>
         <input type="time" id="sleep-time-input" style="width:120px" value="23:00" onchange="saveSetting('sleepTime',this.value)">
@@ -1675,7 +1655,7 @@ body::after {
         </select>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
       <div class="form-group">
         <label>カテゴリ</label>
         <input type="text" id="task-modal-category" placeholder="仕事 / 勉強など" oninput="renderModalCategoryChips(this.value)">
@@ -1688,10 +1668,6 @@ body::after {
           <option value="upcoming">近日</option>
         </select>
       </div>
-    </div>
-    <div class="form-group" style="margin-bottom:18px">
-      <label>メモ <span style="font-size:10px;color:var(--text3);font-weight:400">（任意）</span></label>
-      <textarea id="task-modal-memo" rows="3" placeholder="詳細・参考URL・サブタスクなど..." style="resize:vertical;font-size:13px;line-height:1.6;font-family:'M PLUS 1p',sans-serif"></textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-secondary" onclick="closeTaskModal()">キャンセル</button>
@@ -1931,35 +1907,19 @@ function renderTimeline() {
     html += `<div class="tg-now-line" style="top:${top}px"></div>`;
   }
 
-  // Build weather lookup: hour → {icon, temp}
-  const weatherByHour = {};
-  if(_weatherCache) {
-    const wHours  = _weatherCache.hourly?.time  || [];
-    const wTemps  = _weatherCache.hourly?.temperature_2m || [];
-    const wCodes  = _weatherCache.hourly?.weathercode || [];
-    wHours.forEach((t, i) => {
-      const h = new Date(t).getHours();
-      weatherByHour[h] = { icon: _weatherIcon(wCodes[i]||0), temp: Math.round(wTemps[i]) };
-    });
-  }
-
-  // Hour lines + labels (with weather)
+  // Hour lines + labels
   for(let h=Math.floor(gridStart/60); h<=Math.ceil(gridEnd/60); h++) {
     const topPx = (h*60 - gridStart) * PX_PER_MIN;
     if(topPx > TOTAL_H + 1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${topPx}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
-    const w = weatherByHour[h];
-    const weatherHtml = w
-      ? `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`
-      : '';
-    html += `<div class="tg-hour-label" style="top:${topPx}px"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
+    html += `<div class="tg-hour-label" style="top:${topPx}px">${String(h).padStart(2,'0')}:00</div>`;
   }
   // 30-min dashes (only if spacing ≥ 18px)
   if(PX_PER_MIN * 30 >= 18) {
     for(let h=Math.floor(gridStart/60); h<Math.ceil(gridEnd/60); h++) {
       const topPx = (h*60+30 - gridStart) * PX_PER_MIN;
       if(topPx < TOTAL_H)
-        html += `<div style="position:absolute;left:72px;right:0;top:${topPx}px;height:0;border-top:1px dashed rgba(36,48,80,.4);z-index:1"></div>`;
+        html += `<div style="position:absolute;left:56px;right:0;top:${topPx}px;height:0;border-top:1px dashed rgba(36,48,80,.4);z-index:1"></div>`;
     }
   }
 
@@ -1977,7 +1937,7 @@ function renderTimeline() {
     const endLabel = item.end ? `〜${item.end}` : '';
     const colIdx   = itemCols[i];
     const totalCols = itemSpans[i];
-    html += `<div class="tg-event" style="top:${topPx}px;height:${hPx}px;color:${c};background:${c}18;left:calc(74px + (100% - 78px) * ${colIdx/totalCols});width:calc((100% - 78px) / ${totalCols} - 2px);" onclick="editSchedModal(${item.id})">
+    html += `<div class="tg-event" style="top:${topPx}px;height:${hPx}px;color:${c};background:${c}18;left:calc(58px + (100% - 62px) * ${colIdx/totalCols});width:calc((100% - 62px) / ${totalCols} - 2px);" onclick="editSchedModal(${item.id})">
       <span class="tg-event-time">${item.time}${endLabel}</span>
       <span class="tg-event-title">${item.title}</span>
       <div class="tg-actions">
@@ -1987,15 +1947,19 @@ function renderTimeline() {
     </div>`;
   }
 
-  // Free slots — only show gaps from NOW onwards
-  const freeStart = Math.max(gridStart, nowMin);
+  // Free slots — only show gaps from NOW onwards (past free time is not actionable)
+  const freeStart = Math.max(gridStart, nowMin); // start from current time
   let cursor = freeStart;
+  // Fast-forward cursor past events that already ended
   for(const item of sorted) {
     const s = timeToMins(item.time);
     if(s===null) continue;
     const e = item.end ? Math.min(timeToMins(item.end), gridEnd) : s+60;
-    if(e > freeStart && s <= freeStart) cursor = Math.max(cursor, e);
+    if(e > freeStart) {
+      if(s <= freeStart) cursor = Math.max(cursor, e); // currently in an event
+    }
   }
+  // Now walk forward
   for(const item of sorted) {
     const s = timeToMins(item.time);
     if(s===null || s < cursor) continue;
@@ -2004,7 +1968,7 @@ function renderTimeline() {
       const topPx=(cursor-gridStart)*PX_PER_MIN, hPx=(s-cursor)*PX_PER_MIN, mins=s-cursor;
       const hrs=Math.floor(mins/60),rem=mins%60;
       const freeLabel = hPx>=14 ? (hrs>0 ? '空き '+hrs+'時間'+(rem?rem+'分':'') : '空き '+mins+'分') : '';
-      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:76px;right:2px">${freeLabel}</div>`;
+      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:60px;right:2px">${freeLabel}</div>`;
     }
     cursor=Math.max(cursor,e);
   }
@@ -2012,7 +1976,7 @@ function renderTimeline() {
     const topPx=(cursor-gridStart)*PX_PER_MIN,hPx=(gridEnd-cursor)*PX_PER_MIN,mins=gridEnd-cursor;
     const hrs=Math.floor(mins/60),rem=mins%60;
     const lastLabel=hPx>=14?('空き '+(hrs>0?hrs+'時間'+(rem?rem+'分':''):mins+'分')+' (残り)'):'';
-    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:76px;right:2px">${lastLabel}</div>`;
+    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:60px;right:2px">${lastLabel}</div>`;
   }
 
   html += '</div>';
@@ -2087,8 +2051,8 @@ function renderHomeTasks() {
   }
   const pColor={high:'var(--red)',mid:'var(--orange)',low:'var(--blue)'};
   el.innerHTML = tasks.map(t=>`
-    <div class="home-task-item" onclick="openTaskModal(${t.id})" style="cursor:pointer">
-      <div class="task-check ${t.done?'checked':''}" onclick="event.stopPropagation();toggleTask(${t.id})" style="width:16px;height:16px;flex-shrink:0"></div>
+    <div class="home-task-item">
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${t.id})" style="width:16px;height:16px;flex-shrink:0"></div>
       <div style="font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title}</div>
       <div style="width:6px;height:6px;border-radius:50%;background:${pColor[t.priority]||'var(--blue)'};flex-shrink:0"></div>
     </div>`).join('');
@@ -2499,7 +2463,6 @@ function taskHTML(t) {
       style="cursor:pointer;flex:1">${t.title}</div>
     <div class="task-meta" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
       ${cat}${dl}
-      ${t.memo ? `<span title="${t.memo.replace(/"/g,'&quot;')}" style="font-size:10px;color:var(--text3);cursor:help">📝</span>` : ''}
       <span class="badge ${pBadge}">${pText}</span>
       <button class="task-del" onclick="event.stopPropagation();deleteTask(${t.id})">✕</button>
     </div>
@@ -2547,8 +2510,6 @@ function openTaskModal(id) {
   document.getElementById('task-modal-priority').value = t.priority || 'mid';
   document.getElementById('task-modal-category').value = t.category || '';
   document.getElementById('task-modal-scope').value = t.scope || 'today';
-  const memoEl = document.getElementById('task-modal-memo');
-  if(memoEl) memoEl.value = t.memo || '';
   renderModalCategoryChips(t.category || '');
   document.getElementById('task-modal-overlay').style.display = 'flex';
   setTimeout(()=>document.getElementById('task-modal-title')?.focus(), 50);
@@ -2580,7 +2541,6 @@ function submitTaskModal() {
     priority: document.getElementById('task-modal-priority').value,
     category: document.getElementById('task-modal-category').value.trim(),
     scope:    document.getElementById('task-modal-scope').value,
-    memo:     (document.getElementById('task-modal-memo')?.value || '').trim(),
   };
   saveTasks(tasks);
   closeTaskModal();
@@ -3759,16 +3719,7 @@ function renderHomeMiniTimeline() {
   const TOTAL_H = Math.max(h - 4, 200);
   const PPM = TOTAL_H / totalMins;
 
-  // Weather lookup for mini timeline
-  const miniWByH = {};
-  if(_weatherCache) {
-    const wH=_weatherCache.hourly?.time||[],wT=_weatherCache.hourly?.temperature_2m||[],wC=_weatherCache.hourly?.weathercode||[];
-    wH.forEach((t2,i)=>{ const hw=new Date(t2).getHours(); miniWByH[hw]={icon:_weatherIcon(wC[i]||0),temp:Math.round(wT[i])}; });
-  }
-  const hasW = Object.keys(miniWByH).length > 0;
-  const LW = hasW ? 60 : 44;
-
-  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:${LW+4}px;overflow:hidden">`;
+  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:48px;overflow:hidden">`;
   if(nowMin >= gridStart && nowMin <= gridEnd) {
     html += `<div style="position:absolute;left:0;right:0;top:${(nowMin-gridStart)*PPM}px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold));z-index:5;pointer-events:none"></div>`;
   }
@@ -3776,9 +3727,7 @@ function renderHomeMiniTimeline() {
     const t = (h2*60-gridStart)*PPM;
     if(t > TOTAL_H+1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
-    const ww = miniWByH[h2];
-    const wLine = ww ? `<span style="display:flex;align-items:center;justify-content:flex-end;gap:1px;font-size:9px;color:var(--blue);line-height:1.2">${ww.icon}<b>${ww.temp}°</b></span>` : '';
-    html += `<div style="position:absolute;left:0;width:${LW}px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-${hasW?11:7}px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3);display:flex;flex-direction:column;align-items:flex-end">${String(h2).padStart(2,'0')}:00${wLine}</div>`;
+    html += `<div style="position:absolute;left:0;width:44px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-7px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3)">${String(h2).padStart(2,'0')}:00</div>`;
   }
   const sorted = [...items].sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
   // Simple column layout
@@ -3792,20 +3741,19 @@ function renderHomeMiniTimeline() {
     const s=timeToMins(sorted[i].time)||0,e=sorted[i].end?timeToMins(sorted[i].end):s+60;
     let mx=itemCols[i]; for(let j=0;j<sorted.length;j++){const s2=timeToMins(sorted[j].time)||0,e2=sorted[j].end?timeToMins(sorted[j].end):s2+60;if(s2<e&&e2>s)mx=Math.max(mx,itemCols[j]);} itemSpans.push(mx+1);
   }
-  const EL=LW+4;
   for(let i=0;i<sorted.length;i++){
     const item=sorted[i],sm=timeToMins(item.time);
     if(!sm) continue;
     const em=item.end?timeToMins(item.end):sm+60,safEnd=Math.min(em,gridEnd);
     const top=(sm-gridStart)*PPM,ht=Math.max((safEnd-sm)*PPM,16);
     const c=colorMap[item.color]||'#4a9eff',col=itemCols[i],tot=itemSpans[i];
-    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(${EL}px + (100% - ${EL+4}px)*${col/tot});width:calc((100% - ${EL+4}px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
+    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(48px + (100% - 52px)*${col/tot});width:calc((100% - 52px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
   }
   // Free time from now
   const freeStart=Math.max(gridStart,nowMin);
   let cur=freeStart;
-  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+=`<div style="position:absolute;left:${EL+2}px;right:2px;top:${tp}px;height:${Math.max(hp,2)}px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">${fLbl}</div>`;}cur=Math.max(cur,e);}
-  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+=`<div style="position:absolute;left:${EL+2}px;right:2px;top:${tp}px;height:${hp}px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">${fLbl}</div>`;}
+  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+Math.max(hp,2)+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}cur=Math.max(cur,e);}
+  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+hp+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}
   html += '</div>';
   el.innerHTML = html;
 }
@@ -4075,8 +4023,6 @@ function renderDailyTab() {
 
   // Weekly chart
   _renderWeeklyChart();
-  // Weekly review
-  renderWeeklyReview();
 
   // Completed tasks
   const doneEl = document.getElementById('daily-done-list');
@@ -4255,10 +4201,6 @@ function setTimezone(tz) {
   const inactiveStyle = 'transparent';
   if(btnMy) { btnMy.style.borderColor=tz==='MY'?'var(--blue)':'var(--border)'; btnMy.style.background=tz==='MY'?activeStyle:inactiveStyle; btnMy.style.color=tz==='MY'?'var(--blue)':'var(--text3)'; }
   if(btnJp) { btnJp.style.borderColor=tz==='JP'?'var(--blue)':'var(--border)'; btnJp.style.background=tz==='JP'?activeStyle:inactiveStyle; btnJp.style.color=tz==='JP'?'var(--blue)':'var(--text3)'; }
-  // Show/hide UTM holiday row (Malaysia only)
-  const utmRow = document.getElementById('utm-holiday-row');
-  if(utmRow) utmRow.style.display = tz === 'MY' ? '' : 'none';
-  _updateUtmHolidayBtn();
   fetchWeather();
 }
 
@@ -4286,7 +4228,7 @@ function isTodayHoliday() {
   const d = new Date();
   const isWeekend = d.getDay()===0 || d.getDay()===6;
   const holidays = getTimezone()==='MY' ? MY_HOLIDAYS : JP_HOLIDAYS;
-  return isWeekend || !!holidays[todayKey()] || isUtmHolidayToday();
+  return isWeekend || !!holidays[todayKey()];
 }
 function getTodayHolidayName() {
   const d = new Date();
@@ -4461,172 +4403,6 @@ function renderHomeNewsList() {
     </a>`).join('');
 }
 
-// ==================== UTM HOLIDAY ====================
-function getUtmHolidays() { return DB.get('utm_holidays') || []; }
-function isUtmHolidayToday() { return getUtmHolidays().includes(todayKey()); }
-
-function toggleUtmHoliday() {
-  const today = todayKey();
-  let list = getUtmHolidays();
-  const isHoliday = list.includes(today);
-  if(isHoliday) list = list.filter(d => d !== today);
-  else list.push(today);
-  DB.set('utm_holidays', list);
-  _updateUtmHolidayBtn();
-  // Re-render weather notices
-  if(_weatherCache) _renderWeatherStrip(_weatherCache);
-}
-
-function _updateUtmHolidayBtn() {
-  const btn  = document.getElementById('utm-holiday-btn');
-  const desc = document.getElementById('utm-holiday-desc');
-  if(!btn) return;
-  const isHol = isUtmHolidayToday();
-  btn.textContent = isHol ? '✅ 休業日（解除する）' : '休業日にする';
-  btn.style.borderColor = isHol ? 'var(--green)' : 'var(--border)';
-  btn.style.background  = isHol ? 'rgba(61,214,140,.12)' : 'transparent';
-  btn.style.color       = isHol ? 'var(--green)' : 'var(--text3)';
-  if(desc) desc.textContent = isHol
-    ? `今日 (${todayKey()}) は大学休日 — ジムは休業`
-    : '今日を大学休日（ジム休み）としてマーク';
-}
-
-// ==================== WEEKLY → TODAY AUTO-REFLECT ====================
-function injectWeeklyIntoToday() {
-  const dow = new Date().getDay();
-  const dayMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
-  const todayIdx = dayMap[dow];
-  const weekly = getWeekly().filter(w => Number(w.day) === todayIdx);
-  if(!weekly.length) return;
-  const existing = getSchedule();
-  let added = 0;
-  for(const w of weekly) {
-    if(!existing.some(e => e.title === w.title && e.time === w.time)) {
-      existing.push({ id: Date.now()+Math.random(), time:w.time, end:w.end||'', title:w.title, color:w.color||'blue', syncSource:'weekly' });
-      added++;
-    }
-  }
-  if(added > 0) {
-    existing.sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-    saveSchedule(existing);
-  }
-  return added;
-}
-
-// ==================== FOCUS MODE ====================
-let _focusModeActive = false;
-let _focusModeTask   = '';
-
-function enterFocusMode(taskTitle) {
-  _focusModeActive = true;
-  _focusModeTask   = taskTitle || (getTasks().find(t=>!t.done&&t.scope==='today')?.title) || '集中中';
-  // Build overlay
-  const overlay = document.createElement('div');
-  overlay.id = 'focus-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:900;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;animation:fadeIn .4s ease';
-  overlay.innerHTML = `
-    <div style="font-size:13px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase">集中モード</div>
-    <div style="font-size:28px;font-weight:700;color:var(--text);text-align:center;max-width:500px;line-height:1.4" id="focus-task-title">${_focusModeTask}</div>
-    <div style="font-family:'Outfit',sans-serif;font-size:64px;font-weight:700;color:var(--gold);letter-spacing:-2px" id="focus-timer-display">25:00</div>
-    <div style="display:flex;gap:12px">
-      <button onclick="timerStart();_syncFocusTimer()" style="padding:10px 28px;border-radius:24px;background:var(--gold);color:#000;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:'M PLUS 1p',sans-serif" id="focus-start-btn">▶ スタート</button>
-      <button onclick="exitFocusMode()" style="padding:10px 28px;border-radius:24px;background:transparent;color:var(--text3);border:1px solid var(--border);font-size:15px;cursor:pointer;font-family:'M PLUS 1p',sans-serif">✕ 終了</button>
-    </div>
-    <div style="font-size:12px;color:var(--text3)">🍅 ×<span id="focus-pomodoro">${pomodoroCount}</span>　Escキーで終了</div>`;
-  document.body.appendChild(overlay);
-  document.addEventListener('keydown', _focusEscHandler);
-  // Sync timer display every second
-  _focusSyncInterval = setInterval(() => _syncFocusTimer(), 1000);
-}
-
-let _focusSyncInterval = null;
-function _syncFocusTimer() {
-  const disp = document.getElementById('focus-timer-display');
-  const btn  = document.getElementById('focus-start-btn');
-  const pc   = document.getElementById('focus-pomodoro');
-  if(disp) {
-    const m = Math.floor(timerRemaining/60), s = timerRemaining%60;
-    disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    disp.style.color = timerRunning ? 'var(--gold)' : 'var(--text)';
-  }
-  if(btn)  btn.textContent = timerRunning ? '⏸ 一時停止' : (timerRemaining<timerTotal?'▶ 再開':'▶ スタート');
-  if(pc)   pc.textContent  = pomodoroCount;
-}
-
-function _focusEscHandler(e) { if(e.key==='Escape') exitFocusMode(); }
-
-function exitFocusMode() {
-  _focusModeActive = false;
-  clearInterval(_focusSyncInterval);
-  document.removeEventListener('keydown', _focusEscHandler);
-  const overlay = document.getElementById('focus-overlay');
-  if(overlay) { overlay.style.animation='fadeOut .3s ease forwards'; setTimeout(()=>overlay.remove(),300); }
-}
-
-// ==================== DAILY BANNER FIX (22時) ====================
-// Override the old checkDailyBanner with corrected hour check
-const _origCheckDailyBanner = checkDailyBanner;
-function checkDailyBanner() {
-  if(_dailyBannerShown) return;
-  if(new Date().getHours() < 22) return;   // ← 22時以降（修正済み）
-  if(localStorage.getItem('dailyBannerDismissed')===todayKey()) return;
-  if(!document.getElementById('tab-home')?.classList.contains('active')) return;
-  _dailyBannerShown = true;
-  const notes = getDailyNotes ? getDailyNotes() : {};
-  const hasNote = !!notes[todayKey()];
-  const banner = document.getElementById('daily-banner');
-  if(!banner) return;
-  if(hasNote) {
-    const el = document.getElementById('daily-banner-emoji'); if(el) el.textContent='✨';
-    const tl = document.getElementById('daily-banner-title'); if(tl) tl.textContent='今日の記録を確認しよう';
-    const ml = document.getElementById('daily-banner-msg');   if(ml) ml.textContent='今日の日記が書かれています。振り返ってみましょう。';
-  }
-  banner.style.display = 'block';
-}
-
-// ==================== WEEKLY REVIEW (Dailyタブ追加) ====================
-function renderWeeklyReview() {
-  const el = document.getElementById('daily-weekly-review');
-  if(!el) return;
-  const tasks = getTasks();
-  const notes = getDailyNotes();
-  const moods = getDailyMoods();
-  const rows = [];
-  for(let i=6; i>=0; i--) {
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const days=['日','月','火','水','木','金','土'];
-    const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
-    const done  = tasks.filter(t=>t.done&&(t.deadline===key||t.created===key)).length;
-    const hasN  = !!notes[key];
-    const mood  = moods[key]||0;
-    const isToday = i===0;
-    rows.push({key,label,done,hasN,mood,isToday});
-  }
-  const totalDone  = rows.reduce((s,r)=>s+r.done,0);
-  const journalDays = rows.filter(r=>r.hasN).length;
-  const avgMood    = rows.filter(r=>r.mood).length
-    ? (rows.filter(r=>r.mood).reduce((s,r)=>s+r.mood,0) / rows.filter(r=>r.mood).length).toFixed(1)
-    : '—';
-  el.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-      <div class="stat-card"><div class="stat-num numbers" style="color:var(--green)">${totalDone}</div><div class="stat-label">週間完了タスク</div></div>
-      <div class="stat-card"><div class="stat-num numbers" style="color:var(--blue)">${journalDays}/7</div><div class="stat-label">日記記録日</div></div>
-      <div class="stat-card"><div class="stat-num numbers" style="color:var(--gold)">${avgMood}</div><div class="stat-label">平均気分</div></div>
-    </div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:700">7日間の記録</div>
-    ${rows.map(r=>`
-      <div onclick="loadDailyNote('${r.key}')" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:background .12s;${r.isToday?'background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2)':'border:1px solid transparent'}" onmouseover="this.style.background='var(--card2)'" onmouseout="this.style.background='${r.isToday?'rgba(232,184,75,.08)':'transparent'}'">
-        <span style="font-size:11px;color:${r.isToday?'var(--gold)':'var(--text3)'};width:72px;flex-shrink:0;font-family:'Outfit',sans-serif">${r.label}</span>
-        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
-          <div style="height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:3px;width:${Math.min(r.done*20,100)}%;transition:width .4s"></div>
-        </div>
-        <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;font-family:'Outfit',sans-serif">${r.done}</span>
-        <span style="font-size:14px;width:20px;text-align:center">${r.mood?['','😫','😔','😐','😊','🤩'][r.mood]:'　'}</span>
-        <span style="font-size:11px;color:${r.hasN?'var(--blue)':'var(--border)'}">${r.hasN?'📓':'　'}</span>
-      </div>`).join('')}`;
-}
-
 
 window.addEventListener('DOMContentLoaded', () => {
   loadTheme();
@@ -4643,21 +4419,12 @@ window.addEventListener('DOMContentLoaded', () => {
   applyAdvancedToggles();
   setTimeout(() => autoSyncGoogleCalendar(), 800);
 
-  // Weather
+  // Weather fetch
   setTimeout(() => fetchWeather(), 600);
-
-  // Auto-reflect weekly schedule into today
-  setTimeout(() => {
-    const added = injectWeeklyIntoToday();
-    if(added > 0) { renderTimeline(); renderHome(); }
-  }, 500);
-
-  // UTM holiday button init
-  setTimeout(() => _updateUtmHolidayBtn(), 200);
 
   // Daily banner check (every minute)
   setInterval(() => checkDailyBanner(), 60000);
-  setTimeout(() => checkDailyBanner(), 5000);
+  setTimeout(() => checkDailyBanner(), 3000);
 
   let _resizeTimer = null;
   window.addEventListener('resize', () => {

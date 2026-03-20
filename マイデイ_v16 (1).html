@@ -1525,10 +1525,6 @@ body::after {
         <button id="utm-holiday-btn" onclick="toggleUtmHoliday()"
           style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">休業日にする</button>
       </div>
-
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">就寝リマインダー時間</div>
           <div class="setting-desc">この時間以降に警告バナーを表示します</div>
         </div>
         <input type="time" id="sleep-time-input" style="width:120px" value="23:00" onchange="saveSetting('sleepTime',this.value)">
@@ -2087,8 +2083,8 @@ function renderHomeTasks() {
   }
   const pColor={high:'var(--red)',mid:'var(--orange)',low:'var(--blue)'};
   el.innerHTML = tasks.map(t=>`
-    <div class="home-task-item" onclick="openTaskModal(${t.id})" style="cursor:pointer">
-      <div class="task-check ${t.done?'checked':''}" onclick="event.stopPropagation();toggleTask(${t.id})" style="width:16px;height:16px;flex-shrink:0"></div>
+    <div class="home-task-item">
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${t.id})" style="width:16px;height:16px;flex-shrink:0"></div>
       <div style="font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title}</div>
       <div style="width:6px;height:6px;border-radius:50%;background:${pColor[t.priority]||'var(--blue)'};flex-shrink:0"></div>
     </div>`).join('');
@@ -3759,16 +3755,7 @@ function renderHomeMiniTimeline() {
   const TOTAL_H = Math.max(h - 4, 200);
   const PPM = TOTAL_H / totalMins;
 
-  // Weather lookup for mini timeline
-  const miniWByH = {};
-  if(_weatherCache) {
-    const wH=_weatherCache.hourly?.time||[],wT=_weatherCache.hourly?.temperature_2m||[],wC=_weatherCache.hourly?.weathercode||[];
-    wH.forEach((t2,i)=>{ const hw=new Date(t2).getHours(); miniWByH[hw]={icon:_weatherIcon(wC[i]||0),temp:Math.round(wT[i])}; });
-  }
-  const hasW = Object.keys(miniWByH).length > 0;
-  const LW = hasW ? 60 : 44;
-
-  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:${LW+4}px;overflow:hidden">`;
+  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:48px;overflow:hidden">`;
   if(nowMin >= gridStart && nowMin <= gridEnd) {
     html += `<div style="position:absolute;left:0;right:0;top:${(nowMin-gridStart)*PPM}px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold));z-index:5;pointer-events:none"></div>`;
   }
@@ -3776,9 +3763,7 @@ function renderHomeMiniTimeline() {
     const t = (h2*60-gridStart)*PPM;
     if(t > TOTAL_H+1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
-    const ww = miniWByH[h2];
-    const wLine = ww ? `<span style="display:flex;align-items:center;justify-content:flex-end;gap:1px;font-size:9px;color:var(--blue);line-height:1.2">${ww.icon}<b>${ww.temp}°</b></span>` : '';
-    html += `<div style="position:absolute;left:0;width:${LW}px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-${hasW?11:7}px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3);display:flex;flex-direction:column;align-items:flex-end">${String(h2).padStart(2,'0')}:00${wLine}</div>`;
+    html += `<div style="position:absolute;left:0;width:44px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-7px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3)">${String(h2).padStart(2,'0')}:00</div>`;
   }
   const sorted = [...items].sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
   // Simple column layout
@@ -3792,20 +3777,19 @@ function renderHomeMiniTimeline() {
     const s=timeToMins(sorted[i].time)||0,e=sorted[i].end?timeToMins(sorted[i].end):s+60;
     let mx=itemCols[i]; for(let j=0;j<sorted.length;j++){const s2=timeToMins(sorted[j].time)||0,e2=sorted[j].end?timeToMins(sorted[j].end):s2+60;if(s2<e&&e2>s)mx=Math.max(mx,itemCols[j]);} itemSpans.push(mx+1);
   }
-  const EL=LW+4;
   for(let i=0;i<sorted.length;i++){
     const item=sorted[i],sm=timeToMins(item.time);
     if(!sm) continue;
     const em=item.end?timeToMins(item.end):sm+60,safEnd=Math.min(em,gridEnd);
     const top=(sm-gridStart)*PPM,ht=Math.max((safEnd-sm)*PPM,16);
     const c=colorMap[item.color]||'#4a9eff',col=itemCols[i],tot=itemSpans[i];
-    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(${EL}px + (100% - ${EL+4}px)*${col/tot});width:calc((100% - ${EL+4}px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
+    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(48px + (100% - 52px)*${col/tot});width:calc((100% - 52px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
   }
   // Free time from now
   const freeStart=Math.max(gridStart,nowMin);
   let cur=freeStart;
-  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+=`<div style="position:absolute;left:${EL+2}px;right:2px;top:${tp}px;height:${Math.max(hp,2)}px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">${fLbl}</div>`;}cur=Math.max(cur,e);}
-  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+=`<div style="position:absolute;left:${EL+2}px;right:2px;top:${tp}px;height:${hp}px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">${fLbl}</div>`;}
+  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+Math.max(hp,2)+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}cur=Math.max(cur,e);}
+  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+hp+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}
   html += '</div>';
   el.innerHTML = html;
 }

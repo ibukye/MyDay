@@ -673,8 +673,7 @@ textarea { resize: vertical; min-height: 70px; }
 .filter-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; }
 
 /* ── Animations ── */
-@keyframes fadeIn  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeOut { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(8px)} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
 .fade-in { animation: fadeIn .4s ease; }
 @keyframes soundBounce { 0%,100%{height:4px} 50%{height:14px} }
@@ -744,15 +743,14 @@ body::after {
 }
 
 /* ── FULL-DAY TIMELINE GRID ── */
-.timeline-grid { position:relative;padding-left:72px;overflow:visible; }
+.timeline-grid { position:relative;padding-left:56px;overflow:visible; }
 .tg-hour-label {
-  position:absolute;left:0;width:68px;text-align:right;padding-right:4px;
+  position:absolute;left:0;width:52px;text-align:right;padding-right:6px;
   font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);
   transform:translateY(-7px);pointer-events:none;z-index:2;
-  display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;
 }
 .tg-now-line {
-  position:absolute;left:-72px;right:0;height:2px;
+  position:absolute;left:-56px;right:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--gold),var(--gold));
   z-index:5;pointer-events:none;
 }
@@ -908,15 +906,6 @@ body::after {
 <!-- MAIN -->
 <div id="main">
 
-  <!-- ===== DAILY BANNER (10時以降に表示) ===== -->
-  <div id="daily-banner" style="display:none;position:fixed;bottom:20px;right:20px;z-index:500;max-width:300px;background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--gold);border-radius:var(--radius);padding:16px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:fadeIn .3s ease">
-    <button onclick="dismissDailyBanner()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;line-height:1">✕</button>
-    <div style="font-size:20px;margin-bottom:6px" id="daily-banner-emoji">🌙</div>
-    <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:4px" id="daily-banner-title">今日の振り返りをしよう</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:12px" id="daily-banner-msg">一日の終わりに記録を残すと、明日がもっと充実します。</div>
-    <button class="btn btn-primary btn-sm" onclick="dismissDailyBanner();switchTab('daily')" style="width:100%">📓 Dailyタブを開く →</button>
-  </div>
-
   <!-- ===== HOME TAB ===== -->
   <div id="tab-home" class="tab-content active">
     <div class="home-grid">
@@ -927,18 +916,13 @@ body::after {
           <span class="dot"></span>TODAY'S SCHEDULE
           <div style="margin-left:auto;display:flex;gap:4px;align-items:center">
             <button id="home-sched-list-btn" onclick="setHomeSchedMode('list')"
-              style="padding:2px 8px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .15s">リスト</button>
+              style="padding:2px 8px;border-radius:10px;border:1px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .15s">リスト</button>
             <button id="home-sched-tl-btn" onclick="setHomeSchedMode('timeline')"
-              style="padding:2px 8px;border-radius:10px;border:1px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .15s">タイムライン</button>
+              style="padding:2px 8px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .15s">タイムライン</button>
             <span style="font-size:10px;cursor:pointer;color:var(--text3);margin-left:2px" onclick="switchTab('today')">詳細→</span>
           </div>
         </div>
-        <!-- 天気バー -->
-        <div id="home-weather-bar" style="flex-shrink:0;margin-bottom:6px;display:none">
-          <div id="home-weather-inner" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none"></div>
-          <div id="home-holiday-notice" style="display:none;font-size:11px;color:var(--green);background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:6px;padding:4px 8px;margin-top:4px">🏛️ 祝日のため UTM ジムは 9:00〜13:00 営業</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-shrink:0;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-shrink:0">
           <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(232,184,75,.12);border:1px solid rgba(232,184,75,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--gold)">
             <span style="width:5px;height:5px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite"></span>
             <span id="home-now-time" class="numbers">--:--</span>
@@ -946,14 +930,7 @@ body::after {
           <div id="home-free-badge" style="font-size:11px;color:var(--green);display:none">
             <span id="home-free-text"></span>
           </div>
-          <!-- 🏋️ Gym クイック追加 -->
-          <button onclick="quickAddGym()" style="background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--purple);cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s" onmouseover="this.style.background='rgba(167,139,250,.22)'" onmouseout="this.style.background='rgba(167,139,250,.12)'">🏋️ Gym</button>
           <button onclick="openSchedModal()" style="margin-left:auto;background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.3);border-radius:20px;padding:3px 12px;font-size:11px;color:var(--blue);cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s" onmouseover="this.style.background='rgba(74,158,255,.22)'" onmouseout="this.style.background='rgba(74,158,255,.12)'">＋ 追加</button>
-        </div>
-        <!-- 毎週の予定（今日分） -->
-        <div id="home-weekly-strip" style="flex-shrink:0;margin-bottom:6px;display:none">
-          <div style="font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:700;letter-spacing:.06em">📅 今日の定期予定</div>
-          <div id="home-weekly-items" style="display:flex;gap:6px;flex-wrap:wrap"></div>
         </div>
         <!-- リストビュー -->
         <div id="home-schedule" style="flex:1;overflow-y:auto;min-height:0"></div>
@@ -978,13 +955,16 @@ body::after {
       <!-- 【中列下】Timer / Study 切替ウィジェット -->
       <div class="home-panel" style="display:flex;flex-direction:column;overflow:hidden">
         <div class="home-panel-title" style="flex-shrink:0">
+          <!-- タブ切替 -->
           <button id="home-mid-timer-btn" onclick="setHomeMidMode('timer')"
             style="padding:2px 10px;border-radius:10px;border:1px solid var(--gold);background:rgba(232,184,75,.18);color:var(--gold);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;font-weight:700;transition:all .15s">⏱ TIMER</button>
           <button id="home-mid-study-btn" onclick="setHomeMidMode('study')"
             style="padding:2px 10px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;font-weight:700;transition:all .15s">📚 STUDY</button>
           <span id="home-mid-detail-link" style="margin-left:auto;font-size:10px;cursor:pointer;color:var(--blue)" onclick="switchTab('timer')">詳細 →</span>
         </div>
+        <!-- Timer コンテンツ -->
         <div id="home-timer-widget" style="flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center"></div>
+        <!-- Study コンテンツ -->
         <div id="home-study-mid" style="display:none;flex:1;min-height:0;overflow-y:auto">
           <div id="home-study-btns-mid"></div>
           <div id="home-study-empty-mid" style="display:none" class="empty-state">
@@ -994,34 +974,24 @@ body::after {
         </div>
       </div>
 
-      <!-- 【右列】ニュース - 読みやすいリスト形式 -->
+      <!-- 【右列】ニュース カード型 - span 2行 -->
       <div class="home-panel" style="grid-row:span 2;display:flex;flex-direction:column;overflow:hidden">
         <div class="home-panel-title" style="flex-shrink:0">
           <span class="dot" style="background:var(--orange);box-shadow:0 0 6px var(--orange)"></span>NEWS FEED
           <span id="home-news-counter" style="margin-left:6px;font-size:10px;color:var(--text3)"></span>
           <div style="margin-left:auto;display:flex;gap:4px;align-items:center">
-            <!-- カテゴリフィルタ -->
-            <select id="news-cat-filter" onchange="filterNewsByCategory(this.value)" style="font-size:10px;padding:2px 4px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:var(--text);max-width:70px">
-              <option value="all">全て</option>
-              <option value="tech">Tech</option>
-              <option value="world">World</option>
-            </select>
-            <button class="btn btn-secondary btn-sm" onclick="refreshNews()" style="padding:3px 7px;font-size:11px">↺</button>
+            <button class="btn btn-secondary btn-sm" onclick="tickerPrev()" style="padding:3px 8px;font-size:13px">‹</button>
+            <button class="btn btn-secondary btn-sm" onclick="tickerNext()" style="padding:3px 8px;font-size:13px">›</button>
             <span style="font-size:10px;cursor:pointer;color:var(--blue);padding:3px 6px" onclick="switchTab('news')">詳細 →</span>
           </div>
         </div>
-        <!-- カード型スワイプ -->
-        <div id="home-news-featured" style="flex-shrink:0;margin-bottom:8px;display:none">
-          <div id="home-news-card-wrap" class="news-ticker-wrap" style="min-height:140px"></div>
-          <div style="margin-top:6px">
-            <div style="height:2px;background:var(--border);border-radius:1px;overflow:hidden">
-              <div id="news-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:1px;width:0%;transition:width linear"></div>
-            </div>
+        <div class="news-ticker-wrap" style="flex:1;min-height:0" id="home-news-card-wrap"></div>
+        <div style="margin-top:8px;flex-shrink:0">
+          <div style="height:2px;background:var(--border);border-radius:1px;overflow:hidden">
+            <div id="news-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:1px;width:0%;transition:width linear"></div>
           </div>
-          <div id="home-ticker-dots" style="display:flex;gap:4px;justify-content:center;margin-top:6px"></div>
         </div>
-        <!-- リスト形式 -->
-        <div id="home-news-list" style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column;gap:1px"></div>
+        <div id="home-ticker-dots" style="display:flex;gap:4px;justify-content:center;margin-top:8px;flex-shrink:0"></div>
       </div>
 
     </div>
@@ -1096,11 +1066,6 @@ body::after {
         <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
           <div class="card-title">📍 今日のスケジュール
             <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openSchedModal()">＋ 追加</button>
-          </div>
-          <!-- 天気予報ストリップ -->
-          <div id="weather-strip-wrap" style="flex-shrink:0;margin-bottom:8px;display:none">
-            <div id="weather-strip" style="display:flex;gap:4px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none"></div>
-            <div id="weather-holiday-notice" style="display:none;font-size:11px;color:var(--green);background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:6px;padding:4px 8px;margin-top:4px">🏛️ 祝日のため UTM ジムは 9:00〜13:00 営業</div>
           </div>
           <div id="sync-status-bar" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text3);flex-shrink:0">
             <span id="sync-status-text">📡 同期データ確認中...</span>
@@ -1362,7 +1327,6 @@ body::after {
             <button class="filter-btn active" id="timer-mode-pomodoro" onclick="setTimerMode('pomodoro',this)">🍅 ポモドーロ 25分</button>
             <button class="filter-btn" id="timer-mode-short" onclick="setTimerMode('short',this)">☕ 短休憩 5分</button>
             <button class="filter-btn" id="timer-mode-long" onclick="setTimerMode('long',this)">🌿 長休憩 15分</button>
-            <button class="filter-btn" id="timer-mode-noodle" onclick="setTimerMode('noodle',this)">🍜 カップ麺 3分</button>
             <button class="filter-btn" id="timer-mode-custom" onclick="setTimerMode('custom',this)">⚙ カスタム</button>
           </div>
           <!-- カスタム時間 -->
@@ -1382,7 +1346,6 @@ body::after {
           <div style="display:flex;justify-content:center;gap:12px;margin-bottom:16px">
             <button class="btn btn-primary" id="timer-start-btn" onclick="timerStart()" style="min-width:90px">▶ スタート</button>
             <button class="btn btn-secondary" onclick="timerReset()">↺ リセット</button>
-            <button class="btn btn-secondary" onclick="enterFocusMode()" title="集中モードで全画面表示" style="font-size:13px">🎯</button>
           </div>
           <!-- ポモドーロカウント -->
           <div id="pomodoro-count" style="font-size:12px;color:var(--text3)">
@@ -1448,14 +1411,6 @@ body::after {
           <div id="daily-weekly-labels" style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text3);font-family:'Outfit',sans-serif"></div>
         </div>
 
-        <!-- 週間レビュー -->
-        <div class="card" style="flex-shrink:0">
-          <div class="card-title" style="cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-            📊 週間レビュー <span style="font-size:11px;color:var(--text3);font-weight:400">▾</span>
-          </div>
-          <div id="daily-weekly-review"></div>
-        </div>
-
         <!-- 完了したタスク一覧 -->
         <div class="card" style="flex:1;min-height:100px;display:flex;flex-direction:column">
           <div class="card-title" style="flex-shrink:0">✅ 今日完了したこと</div>
@@ -1502,33 +1457,9 @@ body::after {
     <div class="card">
       <div class="card-title">⚙️ 設定</div>
 
-      <!-- タイムゾーン -->
       <div class="setting-row">
         <div>
-          <div class="setting-label">タイムゾーン / 場所</div>
-          <div class="setting-desc">天気予報の取得先と祝日情報が変わります</div>
-        </div>
-        <div style="display:flex;gap:6px">
-          <button id="tz-btn-my" onclick="setTimezone('MY')"
-            style="padding:5px 14px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:12px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🇲🇾 Malaysia</button>
-          <button id="tz-btn-jp" onclick="setTimezone('JP')"
-            style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🇯🇵 Japan</button>
-        </div>
-      </div>
-
-      <!-- UTM 大学休日マーク -->
-      <div class="setting-row" id="utm-holiday-row" style="display:none">
-        <div>
-          <div class="setting-label">UTM ジム休業日</div>
-          <div class="setting-desc" id="utm-holiday-desc">今日を大学休日（ジム休み）としてマーク</div>
-        </div>
-        <button id="utm-holiday-btn" onclick="toggleUtmHoliday()"
-          style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">休業日にする</button>
-      </div>
-
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">就寝リマインダー時間</div>
+          <div class="setting-label">就寝リマインダー</div>
           <div class="setting-desc">この時間以降に警告バナーを表示します</div>
         </div>
         <input type="time" id="sleep-time-input" style="width:120px" value="23:00" onchange="saveSetting('sleepTime',this.value)">
@@ -1675,7 +1606,7 @@ body::after {
         </select>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
       <div class="form-group">
         <label>カテゴリ</label>
         <input type="text" id="task-modal-category" placeholder="仕事 / 勉強など" oninput="renderModalCategoryChips(this.value)">
@@ -1688,10 +1619,6 @@ body::after {
           <option value="upcoming">近日</option>
         </select>
       </div>
-    </div>
-    <div class="form-group" style="margin-bottom:18px">
-      <label>メモ <span style="font-size:10px;color:var(--text3);font-weight:400">（任意）</span></label>
-      <textarea id="task-modal-memo" rows="3" placeholder="詳細・参考URL・サブタスクなど..." style="resize:vertical;font-size:13px;line-height:1.6;font-family:'M PLUS 1p',sans-serif"></textarea>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-secondary" onclick="closeTaskModal()">キャンセル</button>
@@ -1931,35 +1858,19 @@ function renderTimeline() {
     html += `<div class="tg-now-line" style="top:${top}px"></div>`;
   }
 
-  // Build weather lookup: hour → {icon, temp}
-  const weatherByHour = {};
-  if(_weatherCache) {
-    const wHours  = _weatherCache.hourly?.time  || [];
-    const wTemps  = _weatherCache.hourly?.temperature_2m || [];
-    const wCodes  = _weatherCache.hourly?.weathercode || [];
-    wHours.forEach((t, i) => {
-      const h = new Date(t).getHours();
-      weatherByHour[h] = { icon: _weatherIcon(wCodes[i]||0), temp: Math.round(wTemps[i]) };
-    });
-  }
-
-  // Hour lines + labels (with weather)
+  // Hour lines + labels
   for(let h=Math.floor(gridStart/60); h<=Math.ceil(gridEnd/60); h++) {
     const topPx = (h*60 - gridStart) * PX_PER_MIN;
     if(topPx > TOTAL_H + 1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${topPx}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
-    const w = weatherByHour[h];
-    const weatherHtml = w
-      ? `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`
-      : '';
-    html += `<div class="tg-hour-label" style="top:${topPx}px"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
+    html += `<div class="tg-hour-label" style="top:${topPx}px">${String(h).padStart(2,'0')}:00</div>`;
   }
   // 30-min dashes (only if spacing ≥ 18px)
   if(PX_PER_MIN * 30 >= 18) {
     for(let h=Math.floor(gridStart/60); h<Math.ceil(gridEnd/60); h++) {
       const topPx = (h*60+30 - gridStart) * PX_PER_MIN;
       if(topPx < TOTAL_H)
-        html += `<div style="position:absolute;left:72px;right:0;top:${topPx}px;height:0;border-top:1px dashed rgba(36,48,80,.4);z-index:1"></div>`;
+        html += `<div style="position:absolute;left:56px;right:0;top:${topPx}px;height:0;border-top:1px dashed rgba(36,48,80,.4);z-index:1"></div>`;
     }
   }
 
@@ -1977,7 +1888,7 @@ function renderTimeline() {
     const endLabel = item.end ? `〜${item.end}` : '';
     const colIdx   = itemCols[i];
     const totalCols = itemSpans[i];
-    html += `<div class="tg-event" style="top:${topPx}px;height:${hPx}px;color:${c};background:${c}18;left:calc(74px + (100% - 78px) * ${colIdx/totalCols});width:calc((100% - 78px) / ${totalCols} - 2px);" onclick="editSchedModal(${item.id})">
+    html += `<div class="tg-event" style="top:${topPx}px;height:${hPx}px;color:${c};background:${c}18;left:calc(58px + (100% - 62px) * ${colIdx/totalCols});width:calc((100% - 62px) / ${totalCols} - 2px);" onclick="editSchedModal(${item.id})">
       <span class="tg-event-time">${item.time}${endLabel}</span>
       <span class="tg-event-title">${item.title}</span>
       <div class="tg-actions">
@@ -1987,15 +1898,19 @@ function renderTimeline() {
     </div>`;
   }
 
-  // Free slots — only show gaps from NOW onwards
-  const freeStart = Math.max(gridStart, nowMin);
+  // Free slots — only show gaps from NOW onwards (past free time is not actionable)
+  const freeStart = Math.max(gridStart, nowMin); // start from current time
   let cursor = freeStart;
+  // Fast-forward cursor past events that already ended
   for(const item of sorted) {
     const s = timeToMins(item.time);
     if(s===null) continue;
     const e = item.end ? Math.min(timeToMins(item.end), gridEnd) : s+60;
-    if(e > freeStart && s <= freeStart) cursor = Math.max(cursor, e);
+    if(e > freeStart) {
+      if(s <= freeStart) cursor = Math.max(cursor, e); // currently in an event
+    }
   }
+  // Now walk forward
   for(const item of sorted) {
     const s = timeToMins(item.time);
     if(s===null || s < cursor) continue;
@@ -2004,7 +1919,7 @@ function renderTimeline() {
       const topPx=(cursor-gridStart)*PX_PER_MIN, hPx=(s-cursor)*PX_PER_MIN, mins=s-cursor;
       const hrs=Math.floor(mins/60),rem=mins%60;
       const freeLabel = hPx>=14 ? (hrs>0 ? '空き '+hrs+'時間'+(rem?rem+'分':'') : '空き '+mins+'分') : '';
-      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:76px;right:2px">${freeLabel}</div>`;
+      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:60px;right:2px">${freeLabel}</div>`;
     }
     cursor=Math.max(cursor,e);
   }
@@ -2012,7 +1927,7 @@ function renderTimeline() {
     const topPx=(cursor-gridStart)*PX_PER_MIN,hPx=(gridEnd-cursor)*PX_PER_MIN,mins=gridEnd-cursor;
     const hrs=Math.floor(mins/60),rem=mins%60;
     const lastLabel=hPx>=14?('空き '+(hrs>0?hrs+'時間'+(rem?rem+'分':''):mins+'分')+' (残り)'):'';
-    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:76px;right:2px">${lastLabel}</div>`;
+    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:60px;right:2px">${lastLabel}</div>`;
   }
 
   html += '</div>';
@@ -2038,10 +1953,6 @@ function renderHome() {
   renderHomeTasks();
   renderHomeTicker();
   updateHomeFreeBadge();
-  renderHomeWeeklyStrip();
-  renderHomeNewsList();
-  // Re-render weather strip in home panel
-  if(_weatherCache) _renderWeatherStrip(_weatherCache);
 }
 
 function renderHomeSchedule() {
@@ -2087,8 +1998,8 @@ function renderHomeTasks() {
   }
   const pColor={high:'var(--red)',mid:'var(--orange)',low:'var(--blue)'};
   el.innerHTML = tasks.map(t=>`
-    <div class="home-task-item" onclick="openTaskModal(${t.id})" style="cursor:pointer">
-      <div class="task-check ${t.done?'checked':''}" onclick="event.stopPropagation();toggleTask(${t.id})" style="width:16px;height:16px;flex-shrink:0"></div>
+    <div class="home-task-item">
+      <div class="task-check ${t.done?'checked':''}" onclick="toggleTask(${t.id})" style="width:16px;height:16px;flex-shrink:0"></div>
       <div style="font-size:13px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title}</div>
       <div style="width:6px;height:6px;border-radius:50%;background:${pColor[t.priority]||'var(--blue)'};flex-shrink:0"></div>
     </div>`).join('');
@@ -2499,7 +2410,6 @@ function taskHTML(t) {
       style="cursor:pointer;flex:1">${t.title}</div>
     <div class="task-meta" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
       ${cat}${dl}
-      ${t.memo ? `<span title="${t.memo.replace(/"/g,'&quot;')}" style="font-size:10px;color:var(--text3);cursor:help">📝</span>` : ''}
       <span class="badge ${pBadge}">${pText}</span>
       <button class="task-del" onclick="event.stopPropagation();deleteTask(${t.id})">✕</button>
     </div>
@@ -2547,8 +2457,6 @@ function openTaskModal(id) {
   document.getElementById('task-modal-priority').value = t.priority || 'mid';
   document.getElementById('task-modal-category').value = t.category || '';
   document.getElementById('task-modal-scope').value = t.scope || 'today';
-  const memoEl = document.getElementById('task-modal-memo');
-  if(memoEl) memoEl.value = t.memo || '';
   renderModalCategoryChips(t.category || '');
   document.getElementById('task-modal-overlay').style.display = 'flex';
   setTimeout(()=>document.getElementById('task-modal-title')?.focus(), 50);
@@ -2580,7 +2488,6 @@ function submitTaskModal() {
     priority: document.getElementById('task-modal-priority').value,
     category: document.getElementById('task-modal-category').value.trim(),
     scope:    document.getElementById('task-modal-scope').value,
-    memo:     (document.getElementById('task-modal-memo')?.value || '').trim(),
   };
   saveTasks(tasks);
   closeTaskModal();
@@ -2713,9 +2620,6 @@ async function fetchNews() {
       newsItems.push(...r.value);
     }
   }
-  // Cache for home list view
-  _allNewsItems = [...newsItems];
-  renderHomeNewsList();
 
   document.getElementById('news-loading').style.display = 'none';
 
@@ -3110,8 +3014,6 @@ function loadSettings() {
   if(icsInput) icsInput.value = s.icsUrl || '';
   _updateDisconnectBtn(!!_getToken());
   if(_getToken()) _updateGcalStatus('🔗 連携済み (自動同期ON)');
-  // Timezone toggle
-  setTimezone(getTimezone());
   // Advanced toggles
   const icsOn = s.showIcs || false;
   const utcOn = s.showUtcFix || false;
@@ -3673,7 +3575,7 @@ async function fetchGoogleCalendarEvents(token) {
 }
 
 // ==================== HOME SCHEDULE MODE ====================
-let _homeSchedMode = localStorage.getItem('homeSchedMode') || 'timeline';
+let _homeSchedMode = localStorage.getItem('homeSchedMode') || 'list';
 let _homeMidMode   = localStorage.getItem('homeMidMode')  || 'timer';
 
 function setHomeMidMode(mode) {
@@ -3759,16 +3661,7 @@ function renderHomeMiniTimeline() {
   const TOTAL_H = Math.max(h - 4, 200);
   const PPM = TOTAL_H / totalMins;
 
-  // Weather lookup for mini timeline
-  const miniWByH = {};
-  if(_weatherCache) {
-    const wH=_weatherCache.hourly?.time||[],wT=_weatherCache.hourly?.temperature_2m||[],wC=_weatherCache.hourly?.weathercode||[];
-    wH.forEach((t2,i)=>{ const hw=new Date(t2).getHours(); miniWByH[hw]={icon:_weatherIcon(wC[i]||0),temp:Math.round(wT[i])}; });
-  }
-  const hasW = Object.keys(miniWByH).length > 0;
-  const LW = hasW ? 60 : 44;
-
-  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:${LW+4}px;overflow:hidden">`;
+  let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:48px;overflow:hidden">`;
   if(nowMin >= gridStart && nowMin <= gridEnd) {
     html += `<div style="position:absolute;left:0;right:0;top:${(nowMin-gridStart)*PPM}px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold));z-index:5;pointer-events:none"></div>`;
   }
@@ -3776,9 +3669,7 @@ function renderHomeMiniTimeline() {
     const t = (h2*60-gridStart)*PPM;
     if(t > TOTAL_H+1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
-    const ww = miniWByH[h2];
-    const wLine = ww ? `<span style="display:flex;align-items:center;justify-content:flex-end;gap:1px;font-size:9px;color:var(--blue);line-height:1.2">${ww.icon}<b>${ww.temp}°</b></span>` : '';
-    html += `<div style="position:absolute;left:0;width:${LW}px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-${hasW?11:7}px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3);display:flex;flex-direction:column;align-items:flex-end">${String(h2).padStart(2,'0')}:00${wLine}</div>`;
+    html += `<div style="position:absolute;left:0;width:44px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-7px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3)">${String(h2).padStart(2,'0')}:00</div>`;
   }
   const sorted = [...items].sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
   // Simple column layout
@@ -3792,20 +3683,19 @@ function renderHomeMiniTimeline() {
     const s=timeToMins(sorted[i].time)||0,e=sorted[i].end?timeToMins(sorted[i].end):s+60;
     let mx=itemCols[i]; for(let j=0;j<sorted.length;j++){const s2=timeToMins(sorted[j].time)||0,e2=sorted[j].end?timeToMins(sorted[j].end):s2+60;if(s2<e&&e2>s)mx=Math.max(mx,itemCols[j]);} itemSpans.push(mx+1);
   }
-  const EL=LW+4;
   for(let i=0;i<sorted.length;i++){
     const item=sorted[i],sm=timeToMins(item.time);
     if(!sm) continue;
     const em=item.end?timeToMins(item.end):sm+60,safEnd=Math.min(em,gridEnd);
     const top=(sm-gridStart)*PPM,ht=Math.max((safEnd-sm)*PPM,16);
     const c=colorMap[item.color]||'#4a9eff',col=itemCols[i],tot=itemSpans[i];
-    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(${EL}px + (100% - ${EL+4}px)*${col/tot});width:calc((100% - ${EL+4}px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
+    html+=`<div onclick="editSchedModal(${item.id})" style="position:absolute;top:${top}px;height:${ht}px;color:${c};background:${c}18;border-left:3px solid ${c};border-radius:4px;font-size:10px;padding:2px 4px;overflow:hidden;cursor:pointer;z-index:3;left:calc(48px + (100% - 52px)*${col/tot});width:calc((100% - 52px)/${tot} - 2px)"><span style="font-weight:600">${item.time}</span> ${item.title}</div>`;
   }
   // Free time from now
   const freeStart=Math.max(gridStart,nowMin);
   let cur=freeStart;
-  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+=`<div style="position:absolute;left:${EL+2}px;right:2px;top:${tp}px;height:${Math.max(hp,2)}px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">${fLbl}</div>`;}cur=Math.max(cur,e);}
-  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+=`<div style="position:absolute;left:${EL+2}px;right:2px;top:${tp}px;height:${hp}px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">${fLbl}</div>`;}
+  for(const item of sorted){const s=timeToMins(item.time);if(!s||s<cur)continue;const e=item.end?Math.min(timeToMins(item.end),gridEnd):s+60;if(s-cur>=30){const tp=(cur-gridStart)*PPM,hp=(s-cur)*PPM,mins=s-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?(hrs>0?'空き '+hrs+'h'+(rem?rem+'m':''):'空き '+mins+'分'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+Math.max(hp,2)+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}cur=Math.max(cur,e);}
+  if(gridEnd-cur>=30){const tp=(cur-gridStart)*PPM,hp=(gridEnd-cur)*PPM,mins=gridEnd-cur;const hrs=Math.floor(mins/60),rem=mins%60;const fLbl=hp>=12?('空き '+(hrs>0?hrs+'h'+(rem?rem+'m':''):mins+'分')+' (残り)'):'';html+='<div style="position:absolute;left:50px;right:2px;top:'+tp+'px;height:'+hp+'px;border-radius:3px;background:rgba(61,214,140,.05);border:1px dashed rgba(61,214,140,.15);font-size:9px;color:rgba(61,214,140,.5);display:flex;align-items:center;padding:0 4px;z-index:1">'+fLbl+'</div>';}
   html += '</div>';
   el.innerHTML = html;
 }
@@ -3868,7 +3758,7 @@ let pomodoroCount = getTodayPomodoroCount();
 // ── Timer modes ──
 let timerInterval = null, timerRemaining = 25*60, timerTotal = 25*60, timerRunning = false;
 let timerMode = 'pomodoro';
-const TIMER_MODES = { pomodoro:{secs:25*60,label:'集中タイム 🍅'}, short:{secs:5*60,label:'短休憩 ☕'}, long:{secs:15*60,label:'長休憩 🌿'}, noodle:{secs:2*60+40,label:'カップ麺 🍜 3分'}, custom:{secs:25*60,label:'カスタム ⚙'} };
+const TIMER_MODES = { pomodoro:{secs:25*60,label:'集中タイム 🍅'}, short:{secs:5*60,label:'短休憩 ☕'}, long:{secs:15*60,label:'長休憩 🌿'}, custom:{secs:25*60,label:'カスタム ⚙'} };
 
 function setTimerMode(mode, btn) {
   timerMode = mode;
@@ -4075,8 +3965,6 @@ function renderDailyTab() {
 
   // Weekly chart
   _renderWeeklyChart();
-  // Weekly review
-  renderWeeklyReview();
 
   // Completed tasks
   const doneEl = document.getElementById('daily-done-list');
@@ -4245,388 +4133,6 @@ function insertDailyTemplate(type) {
   el.focus();
 }
 
-// ==================== TIMEZONE & LOCATION ====================
-function getTimezone() { return DB.get('timezone') || 'MY'; }
-function setTimezone(tz) {
-  DB.set('timezone', tz);
-  const btnMy = document.getElementById('tz-btn-my');
-  const btnJp = document.getElementById('tz-btn-jp');
-  const activeStyle  = 'rgba(74,158,255,.18)';
-  const inactiveStyle = 'transparent';
-  if(btnMy) { btnMy.style.borderColor=tz==='MY'?'var(--blue)':'var(--border)'; btnMy.style.background=tz==='MY'?activeStyle:inactiveStyle; btnMy.style.color=tz==='MY'?'var(--blue)':'var(--text3)'; }
-  if(btnJp) { btnJp.style.borderColor=tz==='JP'?'var(--blue)':'var(--border)'; btnJp.style.background=tz==='JP'?activeStyle:inactiveStyle; btnJp.style.color=tz==='JP'?'var(--blue)':'var(--text3)'; }
-  // Show/hide UTM holiday row (Malaysia only)
-  const utmRow = document.getElementById('utm-holiday-row');
-  if(utmRow) utmRow.style.display = tz === 'MY' ? '' : 'none';
-  _updateUtmHolidayBtn();
-  fetchWeather();
-}
-
-// ── Malaysia/Japan public holidays ──
-const MY_HOLIDAYS = {
-  '2025-01-01':'New Year\'s Day','2025-01-27':'Chinese New Year','2025-01-28':'Chinese New Year (2nd)',
-  '2025-02-01':'Federal Territory Day','2025-03-31':'Hari Raya Aidilfitri','2025-04-01':'Hari Raya (2nd)',
-  '2025-05-01':'Labour Day','2025-05-12':'Wesak Day','2025-06-07':'Agong\'s Birthday',
-  '2025-08-31':'National Day','2025-09-16':'Malaysia Day','2025-10-20':'Deepavali','2025-12-25':'Christmas',
-  '2026-01-01':'New Year\'s Day','2026-01-29':'Chinese New Year','2026-02-01':'Federal Territory Day',
-  '2026-03-21':'Hari Raya Aidilfitri','2026-05-01':'Labour Day','2026-05-31':'Wesak Day',
-  '2026-06-06':'Agong\'s Birthday','2026-08-31':'National Day','2026-09-16':'Malaysia Day',
-  '2026-11-08':'Deepavali','2026-12-25':'Christmas',
-};
-const JP_HOLIDAYS = {
-  '2025-01-01':'元日','2025-01-13':'成人の日','2025-02-11':'建国記念の日','2025-03-20':'春分の日',
-  '2025-04-29':'昭和の日','2025-05-03':'憲法記念日','2025-05-04':'みどりの日','2025-05-05':'こどもの日',
-  '2025-07-21':'海の日','2025-08-11':'山の日','2025-09-15':'敬老の日','2025-09-23':'秋分の日',
-  '2025-10-13':'スポーツの日','2025-11-03':'文化の日','2025-11-23':'勤労感謝の日',
-  '2026-01-01':'元日','2026-01-12':'成人の日','2026-02-11':'建国記念の日','2026-03-20':'春分の日',
-  '2026-04-29':'昭和の日','2026-05-03':'憲法記念日','2026-05-04':'みどりの日','2026-05-05':'こどもの日',
-};
-
-function isTodayHoliday() {
-  const d = new Date();
-  const isWeekend = d.getDay()===0 || d.getDay()===6;
-  const holidays = getTimezone()==='MY' ? MY_HOLIDAYS : JP_HOLIDAYS;
-  return isWeekend || !!holidays[todayKey()] || isUtmHolidayToday();
-}
-function getTodayHolidayName() {
-  const d = new Date();
-  const holidays = getTimezone()==='MY' ? MY_HOLIDAYS : JP_HOLIDAYS;
-  if(holidays[todayKey()]) return holidays[todayKey()];
-  if(d.getDay()===0) return 'Sunday';
-  if(d.getDay()===6) return 'Saturday';
-  return null;
-}
-
-// ── WMO weather code → emoji ──
-function _weatherIcon(code) {
-  if(code===0) return '☀️';
-  if(code<=2)  return '⛅';
-  if(code<=3)  return '☁️';
-  if(code<=49) return '🌫️';
-  if(code<=69) return '🌧️';
-  if(code<=82) return '🌧️';
-  return '⛈️';
-}
-
-let _weatherCache = null, _weatherDate = '';
-async function fetchWeather() {
-  const today = todayKey();
-  if(_weatherCache && _weatherDate===today) { _renderWeatherStrip(_weatherCache); return; }
-  const tz = getTimezone();
-  const [lat, lon, tzStr] = tz==='MY'
-    ? [3.1390, 101.6869, 'Asia%2FKuala_Lumpur']
-    : [35.6762, 139.6503, 'Asia%2FTokyo'];
-  try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,weathercode,precipitation_probability&timezone=${tzStr}&forecast_days=1`;
-    const res = await fetch(url);
-    if(!res.ok) return;
-    const data = await res.json();
-    _weatherCache = data; _weatherDate = today;
-    _renderWeatherStrip(data);
-  } catch(e) { console.warn('[weather]', e.message); }
-}
-
-function _renderWeatherStrip(data) {
-  const hours  = data.hourly?.time  || [];
-  const temps  = data.hourly?.temperature_2m || [];
-  const codes  = data.hourly?.weathercode || [];
-  const precip = data.hourly?.precipitation_probability || [];
-  if(!hours.length) return;
-  const nowH = new Date().getHours();
-  const items = [];
-  for(let i=nowH; i<Math.min(nowH+13, hours.length); i++) {
-    const h = new Date(hours[i]).getHours();
-    items.push({ h, temp:Math.round(temps[i]), icon:_weatherIcon(codes[i]||0), rain:precip[i]||0 });
-  }
-  const makeHtml = (idx) => `
-    <div style="flex-shrink:0;text-align:center;padding:4px 6px;border-radius:8px;background:${idx===0?'rgba(74,158,255,.12)':'transparent'};border:1px solid ${idx===0?'var(--blue)':'transparent'}">
-      <div style="font-size:10px;color:var(--text3);font-family:'Outfit',sans-serif">${String(items[idx].h).padStart(2,'0')}:00</div>
-      <div style="font-size:16px;margin:2px 0">${items[idx].icon}</div>
-      <div style="font-size:11px;font-weight:700;color:var(--text);font-family:'Outfit',sans-serif">${items[idx].temp}°</div>
-      ${items[idx].rain>=30?`<div style="font-size:9px;color:var(--blue)">${items[idx].rain}%</div>`:'<div style="font-size:9px">&nbsp;</div>'}
-    </div>`;
-  const html = items.map((_,i) => makeHtml(i)).join('');
-  const isHoliday = isTodayHoliday();
-  const tz = getTimezone();
-  [['weather-strip','weather-strip-wrap','weather-holiday-notice'],
-   ['home-weather-inner','home-weather-bar','home-holiday-notice']].forEach(([stripId, wrapId, noticeId]) => {
-    const strip = document.getElementById(stripId);
-    const wrap  = document.getElementById(wrapId);
-    const notice = document.getElementById(noticeId);
-    if(strip) strip.innerHTML = html;
-    if(wrap)  wrap.style.display = 'block';
-    if(notice) {
-      if(isHoliday && tz==='MY') {
-        const hname = getTodayHolidayName();
-        notice.innerHTML = `🏛️ ${hname?hname+' — ':''}UTM ジムは 9:00〜13:00 営業`;
-        notice.style.display = 'block';
-      } else {
-        notice.style.display = 'none';
-      }
-    }
-  });
-}
-
-// ==================== GYM QUICK-ADD ====================
-function quickAddGym() {
-  const now = new Date();
-  const startMins = Math.ceil((now.getHours()*60+now.getMinutes())/5)*5;
-  const endMins   = startMins + 90;
-  const fmt = m => `${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
-  const items = getSchedule();
-  items.push({ id:Date.now(), time:fmt(startMins), end:fmt(endMins), title:'🏋️ ジム', color:'purple' });
-  items.sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-  saveSchedule(items);
-  renderTimeline();
-  renderHome();
-  const btn = event.currentTarget;
-  const orig = btn.innerHTML;
-  btn.innerHTML='✅ 追加済み'; btn.style.background='rgba(61,214,140,.18)'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)';
-  setTimeout(()=>{ btn.innerHTML=orig; btn.style.background='rgba(167,139,250,.12)'; btn.style.borderColor='rgba(167,139,250,.3)'; btn.style.color='var(--purple)'; }, 2000);
-}
-
-// ==================== DAILY BANNER ====================
-let _dailyBannerShown = false;
-function checkDailyBanner() {
-  if(_dailyBannerShown) return;
-  if(new Date().getHours() < 22) return;
-  if(localStorage.getItem('dailyBannerDismissed')===todayKey()) return;
-  if(!document.getElementById('tab-home')?.classList.contains('active')) return;
-  _dailyBannerShown = true;
-  const notes = getDailyNotes ? getDailyNotes() : {};
-  const hasNote = !!notes[todayKey()];
-  const banner = document.getElementById('daily-banner');
-  if(!banner) return;
-  if(hasNote) {
-    const e = document.getElementById('daily-banner-emoji');
-    const t = document.getElementById('daily-banner-title');
-    const m = document.getElementById('daily-banner-msg');
-    if(e) e.textContent='✨';
-    if(t) t.textContent='今日の記録を確認しよう';
-    if(m) m.textContent='今日の日記が書かれています。振り返ってみましょう。';
-  }
-  banner.style.display = 'block';
-}
-function dismissDailyBanner() {
-  localStorage.setItem('dailyBannerDismissed', todayKey());
-  const banner = document.getElementById('daily-banner');
-  if(banner) { banner.style.animation='fadeOut .3s ease forwards'; setTimeout(()=>{ banner.style.display='none'; banner.style.animation=''; },300); }
-}
-
-// ==================== HOME WEEKLY STRIP ====================
-function renderHomeWeeklyStrip() {
-  const wrap  = document.getElementById('home-weekly-strip');
-  const items = document.getElementById('home-weekly-items');
-  if(!wrap || !items) return;
-  const dow = new Date().getDay();
-  // JS: Sun=0,Mon=1...Sat=6 → weekly.day: Mon=0,Tue=1...Sun=6
-  const dayMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
-  const todayIdx = dayMap[dow];
-  const weekly = getWeekly().filter(w => Number(w.day)===todayIdx);
-  if(!weekly.length) { wrap.style.display='none'; return; }
-  wrap.style.display = 'block';
-  items.innerHTML = weekly.map(w => {
-    const c = colorMap[w.color]||'#4a9eff';
-    return `<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;background:${c}18;border:1px solid ${c}44;font-size:11px;color:${c}">
-      <span style="font-family:'Outfit',sans-serif">${w.time||'終日'}</span> ${w.title}
-    </span>`;
-  }).join('');
-}
-
-// ==================== NEWS LIST VIEW ====================
-let _allNewsItems = [];
-let _newsCatFilter = 'all';
-function filterNewsByCategory(cat) { _newsCatFilter=cat; renderHomeNewsList(); }
-function refreshNews() { _allNewsItems=[]; fetchNews().then(()=>renderHomeNewsList()); }
-
-function renderHomeNewsList() {
-  const el = document.getElementById('home-news-list');
-  if(!el) return;
-  let items = _allNewsItems;
-  if(_newsCatFilter==='tech')  items = items.filter(n=>(n.source||'').toLowerCase().includes('hacker')||(n.source||'').toLowerCase().includes('tech'));
-  else if(_newsCatFilter==='world') items = items.filter(n=>(n.source||'').toLowerCase().includes('reddit'));
-  const cntEl = document.getElementById('home-news-counter');
-  if(cntEl) cntEl.textContent = _allNewsItems.length ? _allNewsItems.length+'件' : '';
-  if(!items.length) {
-    el.innerHTML='<div style="text-align:center;padding:20px;font-size:12px;color:var(--text3)">ニュースを読み込み中... ⏳</div>';
-    return;
-  }
-  el.innerHTML = items.map((n,i) => `
-    <a href="${n.link||'#'}" target="_blank" style="display:flex;gap:10px;align-items:flex-start;padding:8px 4px;border-bottom:1px solid var(--border);text-decoration:none;transition:background .12s;border-radius:4px" onmouseover="this.style.background='var(--card2)'" onmouseout="this.style.background='transparent'">
-      <div style="width:26px;height:26px;border-radius:6px;background:rgba(255,160,64,.1);border:1px solid rgba(255,160,64,.18);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px">${(n.source||'').toLowerCase().includes('hacker')?'🔶':'🔴'}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:12px;color:var(--text);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${n.title}</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:2px">${n.source||''}</div>
-      </div>
-    </a>`).join('');
-}
-
-// ==================== UTM HOLIDAY ====================
-function getUtmHolidays() { return DB.get('utm_holidays') || []; }
-function isUtmHolidayToday() { return getUtmHolidays().includes(todayKey()); }
-
-function toggleUtmHoliday() {
-  const today = todayKey();
-  let list = getUtmHolidays();
-  const isHoliday = list.includes(today);
-  if(isHoliday) list = list.filter(d => d !== today);
-  else list.push(today);
-  DB.set('utm_holidays', list);
-  _updateUtmHolidayBtn();
-  // Re-render weather notices
-  if(_weatherCache) _renderWeatherStrip(_weatherCache);
-}
-
-function _updateUtmHolidayBtn() {
-  const btn  = document.getElementById('utm-holiday-btn');
-  const desc = document.getElementById('utm-holiday-desc');
-  if(!btn) return;
-  const isHol = isUtmHolidayToday();
-  btn.textContent = isHol ? '✅ 休業日（解除する）' : '休業日にする';
-  btn.style.borderColor = isHol ? 'var(--green)' : 'var(--border)';
-  btn.style.background  = isHol ? 'rgba(61,214,140,.12)' : 'transparent';
-  btn.style.color       = isHol ? 'var(--green)' : 'var(--text3)';
-  if(desc) desc.textContent = isHol
-    ? `今日 (${todayKey()}) は大学休日 — ジムは休業`
-    : '今日を大学休日（ジム休み）としてマーク';
-}
-
-// ==================== WEEKLY → TODAY AUTO-REFLECT ====================
-function injectWeeklyIntoToday() {
-  const dow = new Date().getDay();
-  const dayMap = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
-  const todayIdx = dayMap[dow];
-  const weekly = getWeekly().filter(w => Number(w.day) === todayIdx);
-  if(!weekly.length) return;
-  const existing = getSchedule();
-  let added = 0;
-  for(const w of weekly) {
-    if(!existing.some(e => e.title === w.title && e.time === w.time)) {
-      existing.push({ id: Date.now()+Math.random(), time:w.time, end:w.end||'', title:w.title, color:w.color||'blue', syncSource:'weekly' });
-      added++;
-    }
-  }
-  if(added > 0) {
-    existing.sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-    saveSchedule(existing);
-  }
-  return added;
-}
-
-// ==================== FOCUS MODE ====================
-let _focusModeActive = false;
-let _focusModeTask   = '';
-
-function enterFocusMode(taskTitle) {
-  _focusModeActive = true;
-  _focusModeTask   = taskTitle || (getTasks().find(t=>!t.done&&t.scope==='today')?.title) || '集中中';
-  // Build overlay
-  const overlay = document.createElement('div');
-  overlay.id = 'focus-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:900;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;animation:fadeIn .4s ease';
-  overlay.innerHTML = `
-    <div style="font-size:13px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase">集中モード</div>
-    <div style="font-size:28px;font-weight:700;color:var(--text);text-align:center;max-width:500px;line-height:1.4" id="focus-task-title">${_focusModeTask}</div>
-    <div style="font-family:'Outfit',sans-serif;font-size:64px;font-weight:700;color:var(--gold);letter-spacing:-2px" id="focus-timer-display">25:00</div>
-    <div style="display:flex;gap:12px">
-      <button onclick="timerStart();_syncFocusTimer()" style="padding:10px 28px;border-radius:24px;background:var(--gold);color:#000;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:'M PLUS 1p',sans-serif" id="focus-start-btn">▶ スタート</button>
-      <button onclick="exitFocusMode()" style="padding:10px 28px;border-radius:24px;background:transparent;color:var(--text3);border:1px solid var(--border);font-size:15px;cursor:pointer;font-family:'M PLUS 1p',sans-serif">✕ 終了</button>
-    </div>
-    <div style="font-size:12px;color:var(--text3)">🍅 ×<span id="focus-pomodoro">${pomodoroCount}</span>　Escキーで終了</div>`;
-  document.body.appendChild(overlay);
-  document.addEventListener('keydown', _focusEscHandler);
-  // Sync timer display every second
-  _focusSyncInterval = setInterval(() => _syncFocusTimer(), 1000);
-}
-
-let _focusSyncInterval = null;
-function _syncFocusTimer() {
-  const disp = document.getElementById('focus-timer-display');
-  const btn  = document.getElementById('focus-start-btn');
-  const pc   = document.getElementById('focus-pomodoro');
-  if(disp) {
-    const m = Math.floor(timerRemaining/60), s = timerRemaining%60;
-    disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    disp.style.color = timerRunning ? 'var(--gold)' : 'var(--text)';
-  }
-  if(btn)  btn.textContent = timerRunning ? '⏸ 一時停止' : (timerRemaining<timerTotal?'▶ 再開':'▶ スタート');
-  if(pc)   pc.textContent  = pomodoroCount;
-}
-
-function _focusEscHandler(e) { if(e.key==='Escape') exitFocusMode(); }
-
-function exitFocusMode() {
-  _focusModeActive = false;
-  clearInterval(_focusSyncInterval);
-  document.removeEventListener('keydown', _focusEscHandler);
-  const overlay = document.getElementById('focus-overlay');
-  if(overlay) { overlay.style.animation='fadeOut .3s ease forwards'; setTimeout(()=>overlay.remove(),300); }
-}
-
-// ==================== DAILY BANNER FIX (22時) ====================
-// Override the old checkDailyBanner with corrected hour check
-const _origCheckDailyBanner = checkDailyBanner;
-function checkDailyBanner() {
-  if(_dailyBannerShown) return;
-  if(new Date().getHours() < 22) return;   // ← 22時以降（修正済み）
-  if(localStorage.getItem('dailyBannerDismissed')===todayKey()) return;
-  if(!document.getElementById('tab-home')?.classList.contains('active')) return;
-  _dailyBannerShown = true;
-  const notes = getDailyNotes ? getDailyNotes() : {};
-  const hasNote = !!notes[todayKey()];
-  const banner = document.getElementById('daily-banner');
-  if(!banner) return;
-  if(hasNote) {
-    const el = document.getElementById('daily-banner-emoji'); if(el) el.textContent='✨';
-    const tl = document.getElementById('daily-banner-title'); if(tl) tl.textContent='今日の記録を確認しよう';
-    const ml = document.getElementById('daily-banner-msg');   if(ml) ml.textContent='今日の日記が書かれています。振り返ってみましょう。';
-  }
-  banner.style.display = 'block';
-}
-
-// ==================== WEEKLY REVIEW (Dailyタブ追加) ====================
-function renderWeeklyReview() {
-  const el = document.getElementById('daily-weekly-review');
-  if(!el) return;
-  const tasks = getTasks();
-  const notes = getDailyNotes();
-  const moods = getDailyMoods();
-  const rows = [];
-  for(let i=6; i>=0; i--) {
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    const days=['日','月','火','水','木','金','土'];
-    const label = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
-    const done  = tasks.filter(t=>t.done&&(t.deadline===key||t.created===key)).length;
-    const hasN  = !!notes[key];
-    const mood  = moods[key]||0;
-    const isToday = i===0;
-    rows.push({key,label,done,hasN,mood,isToday});
-  }
-  const totalDone  = rows.reduce((s,r)=>s+r.done,0);
-  const journalDays = rows.filter(r=>r.hasN).length;
-  const avgMood    = rows.filter(r=>r.mood).length
-    ? (rows.filter(r=>r.mood).reduce((s,r)=>s+r.mood,0) / rows.filter(r=>r.mood).length).toFixed(1)
-    : '—';
-  el.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-      <div class="stat-card"><div class="stat-num numbers" style="color:var(--green)">${totalDone}</div><div class="stat-label">週間完了タスク</div></div>
-      <div class="stat-card"><div class="stat-num numbers" style="color:var(--blue)">${journalDays}/7</div><div class="stat-label">日記記録日</div></div>
-      <div class="stat-card"><div class="stat-num numbers" style="color:var(--gold)">${avgMood}</div><div class="stat-label">平均気分</div></div>
-    </div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:700">7日間の記録</div>
-    ${rows.map(r=>`
-      <div onclick="loadDailyNote('${r.key}')" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:background .12s;${r.isToday?'background:rgba(232,184,75,.08);border:1px solid rgba(232,184,75,.2)':'border:1px solid transparent'}" onmouseover="this.style.background='var(--card2)'" onmouseout="this.style.background='${r.isToday?'rgba(232,184,75,.08)':'transparent'}'">
-        <span style="font-size:11px;color:${r.isToday?'var(--gold)':'var(--text3)'};width:72px;flex-shrink:0;font-family:'Outfit',sans-serif">${r.label}</span>
-        <div style="flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden">
-          <div style="height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:3px;width:${Math.min(r.done*20,100)}%;transition:width .4s"></div>
-        </div>
-        <span style="font-size:11px;color:var(--text3);width:24px;text-align:right;font-family:'Outfit',sans-serif">${r.done}</span>
-        <span style="font-size:14px;width:20px;text-align:center">${r.mood?['','😫','😔','😐','😊','🤩'][r.mood]:'　'}</span>
-        <span style="font-size:11px;color:${r.hasN?'var(--blue)':'var(--border)'}">${r.hasN?'📓':'　'}</span>
-      </div>`).join('')}`;
-}
-
 
 window.addEventListener('DOMContentLoaded', () => {
   loadTheme();
@@ -4639,26 +4145,14 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sleep-time-input').value = s.sleepTime||'23:00';
   document.getElementById('wake-time-input').value  = s.wakeTime||'06:30';
 
+  // ICS calendar_data.js (Python route) - 使っている場合のみ有効
   loadCalendarSyncData();
   applyAdvancedToggles();
+
+  // Google Calendar API 自動同期（トークンがあればページロード時に実行）
   setTimeout(() => autoSyncGoogleCalendar(), 800);
 
-  // Weather
-  setTimeout(() => fetchWeather(), 600);
-
-  // Auto-reflect weekly schedule into today
-  setTimeout(() => {
-    const added = injectWeeklyIntoToday();
-    if(added > 0) { renderTimeline(); renderHome(); }
-  }, 500);
-
-  // UTM holiday button init
-  setTimeout(() => _updateUtmHolidayBtn(), 200);
-
-  // Daily banner check (every minute)
-  setInterval(() => checkDailyBanner(), 60000);
-  setTimeout(() => checkDailyBanner(), 5000);
-
+  // Re-render timeline on resize
   let _resizeTimer = null;
   window.addEventListener('resize', () => {
     clearTimeout(_resizeTimer);
