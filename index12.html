@@ -1262,17 +1262,14 @@ body::after {
       <!-- Left: Headlines -->
       <div class="card">
         <div class="card-title">📰 最新ニュース
-          <div style="display:flex;gap:6px;margin-left:auto">
-            <button class="btn btn-sm btn-secondary" onclick="copyNewsLinks()" title="全リンクをコピー（NotebookLM用）">📋 リンクをコピー</button>
-            <button class="btn btn-sm btn-secondary" onclick="fetchNews()">🔄 更新</button>
-          </div>
+          <button class="btn btn-sm btn-secondary" style="margin-left:auto" onclick="fetchNews()">🔄 更新</button>
         </div>
         <div id="news-loading">ニュースを読み込み中...</div>
         <div id="news-list"></div>
       </div>
       <!-- Right: AI Conversation -->
       <div class="card">
-        <div class="card-title">🎙️ 解説Talk
+        <div class="card-title">💬 AI解説トーク（音声付き）
           <span id="ai-provider-badge" style="margin-left:8px;font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(74,158,255,.15);border:1px solid rgba(74,158,255,.3);color:var(--blue)"></span>
         </div>
         <div id="api-key-notice">
@@ -1280,12 +1277,38 @@ body::after {
           <small style="opacity:.7">「非表示」設定中は会話機能は使えません。</small>
         </div>
         <div id="conv-section">
-          <!-- CTA Button -->
-          <div style="margin-bottom:14px">
-            <button class="btn btn-primary" id="gen-conv-btn" onclick="openNewsSelectModal()" style="width:100%;padding:12px;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px">
-              🎙️ 解説Talkを生成する
-            </button>
-            <div id="conv-selected-news" style="margin-top:8px;font-size:12px;color:var(--text3);min-height:16px"></div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px">左のニュースを選択して「会話を生成」を押してください。</p>
+
+          <!-- Voice Settings -->
+          <div id="voice-settings" style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px;display:none">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:700">🎤 音声設定</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div>
+                <label style="font-size:11px;color:var(--text3)">Aさんの声</label>
+                <select id="voice-a" style="width:100%;margin-top:4px;font-size:12px"></select>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--text3)">Bさんの声</label>
+                <select id="voice-b" style="width:100%;margin-top:4px;font-size:12px"></select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+              <div>
+                <label style="font-size:11px;color:var(--text3)">読み上げ速度</label>
+                <input type="range" id="tts-rate" min="0.7" max="1.5" step="0.1" value="1.0" style="width:100%;margin-top:4px" oninput="document.getElementById('tts-rate-val').textContent=this.value+'x'">
+                <span id="tts-rate-val" style="font-size:11px;color:var(--text3)">1.0x</span>
+              </div>
+              <div>
+                <label style="font-size:11px;color:var(--text3)">ピッチ差（A vs B）</label>
+                <input type="range" id="tts-pitch" min="0" max="0.6" step="0.1" value="0.3" style="width:100%;margin-top:4px" oninput="document.getElementById('tts-pitch-val').textContent=this.value">
+                <span id="tts-pitch-val" style="font-size:11px;color:var(--text3)">0.3</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="gen-conv-btn" onclick="generateConversation()">🎙️ 会話を生成</button>
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('voice-settings').style.display=document.getElementById('voice-settings').style.display==='none'?'block':'none'">🎤 音声設定</button>
           </div>
 
           <!-- Voice Player -->
@@ -1676,60 +1699,6 @@ body::after {
         <input type="text" id="name-input" style="width:150px" placeholder="あなたの名前" onchange="saveSetting('name',this.value)">
       </div>
 
-      <!-- ── 解説Talk 音声設定 ── -->
-      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">🎤 解説Talk 音声設定</div>
-
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">Aさんの声</div>
-          </div>
-          <select id="voice-a" style="width:180px;font-size:12px"></select>
-        </div>
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">Bさんの声</div>
-          </div>
-          <select id="voice-b" style="width:180px;font-size:12px"></select>
-        </div>
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">読み上げ速度</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input type="range" id="tts-rate" min="0.7" max="1.5" step="0.1" value="1.0" style="width:120px" oninput="document.getElementById('tts-rate-val').textContent=this.value+'x'">
-            <span id="tts-rate-val" style="font-size:12px;color:var(--text2);min-width:32px">1.0x</span>
-          </div>
-        </div>
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">ピッチ差（A vs B）</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <input type="range" id="tts-pitch" min="0" max="0.6" step="0.1" value="0.3" style="width:120px" oninput="document.getElementById('tts-pitch-val').textContent=this.value">
-            <span id="tts-pitch-val" style="font-size:12px;color:var(--text2);min-width:24px">0.3</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── ニュース表示設定 ── -->
-      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">📰 ニュース表示設定</div>
-
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">スコア・コメント数を表示</div>
-            <div class="setting-desc">「128点 / 49コメント」などのメタ情報</div>
-          </div>
-          <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
-            <input type="checkbox" id="toggle-news-meta" onchange="toggleNewsMeta(this.checked)" style="opacity:0;width:0;height:0">
-            <span id="toggle-news-meta-track" style="position:absolute;inset:0;background:var(--border2);border-radius:12px;transition:background .2s">
-              <span id="toggle-news-meta-thumb" style="position:absolute;left:3px;top:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .2s"></span>
-            </span>
-          </label>
-        </div>
-      </div>
-
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
         <button class="btn btn-danger" onclick="if(confirm('全データを削除しますか？'))clearAllData()">🗑️ 全データを削除</button>
       </div>
@@ -1833,29 +1802,6 @@ body::after {
         <p>✦ <strong>就寝改善</strong>：設定した時間になると上部に警告が表示されます</p>
         <p>✦ <strong>後回し防止</strong>：タスクに必ず締め切りと優先度を設定する習慣をつけましょう</p>
         <p>✦ <strong>毎週の予定</strong>：「毎週の予定」タブは固定の繰り返し予定専用です</p>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ===== ニュース選択モーダル（解説Talk用） ===== -->
-  <div id="news-select-modal-overlay" onclick="if(event.target===this)closeNewsSelectModal()" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
-    <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:0;width:100%;max-width:600px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:fadeIn .2s ease;overflow:hidden">
-      <!-- Header -->
-      <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;gap:10px">
-        <div style="flex:1">
-          <div style="font-size:15px;font-weight:700">🎙️ 解説するニュースを選択</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px">選択後、AIが日本語で会話形式に解説します</div>
-        </div>
-        <button onclick="closeNewsSelectModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:0 4px;line-height:1">✕</button>
-      </div>
-      <!-- News list -->
-      <div id="news-select-list" style="overflow-y:auto;flex:1;padding:12px 16px"></div>
-      <!-- Footer -->
-      <div style="padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;display:flex;gap:8px;align-items:center">
-        <span id="news-select-hint" style="font-size:12px;color:var(--text3);flex:1">ニュースをクリックして選択してください</span>
-        <button class="btn btn-secondary" onclick="closeNewsSelectModal()">キャンセル</button>
-        <button class="btn btn-primary" id="news-select-ok" onclick="confirmNewsSelect()" disabled style="opacity:.4">生成する →</button>
       </div>
     </div>
   </div>
@@ -2948,7 +2894,7 @@ async function fetchHackerNews() {
   );
   return items.filter(i => i && i.title).map(i => ({
     title: i.title,
-    description: i.url ? (getSettings().showNewsMeta ? `${i.score}点 / ${i.descendants||0}コメント` : '') : 'テキスト投稿',
+    description: i.url ? `${i.score}点 / ${i.descendants||0}コメント` : 'テキスト投稿',
     link: i.url || `https://news.ycombinator.com/item?id=${i.id}`,
     source: 'Hacker News',
   }));
@@ -2962,7 +2908,7 @@ async function fetchReddit(subreddit, label) {
   ).then(r => r.json());
   return (data?.data?.children || []).map(c => c.data).filter(p => p.title).map(p => ({
     title: p.title,
-    description: p.selftext?.slice(0, 200) || (getSettings().showNewsMeta ? `👍 ${p.score} / 💬 ${p.num_comments}コメント` : ''),
+    description: p.selftext?.slice(0, 200) || `👍 ${p.score} / 💬 ${p.num_comments}コメント`,
     link: p.url || `https://reddit.com${p.permalink}`,
     source: `Reddit r/${subreddit}`,
   }));
@@ -3235,14 +3181,8 @@ let availableVoices = [];
 
 function loadVoices() {
   availableVoices = window.speechSynthesis.getVoices();
-  if(!availableVoices.length) {
-    // Voices not ready yet — retry
-    setTimeout(loadVoices, 200);
-    return;
-  }
   const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
-  // Always use Japanese voices in the selector if available
-  const pool = jaVoices.length ? jaVoices : availableVoices;
+  const pool = jaVoices.length >= 2 ? jaVoices : availableVoices;
 
   const selA = document.getElementById('voice-a');
   const selB = document.getElementById('voice-b');
@@ -3252,7 +3192,7 @@ function loadVoices() {
   selA.innerHTML = opts;
   selB.innerHTML = opts;
 
-  // Default: pick two different Japanese voices if possible
+  // Default: pick two different voices if possible
   if(pool.length >= 2) selB.selectedIndex = 1;
 }
 
@@ -3287,37 +3227,11 @@ function ttsPlay() {
   ttsStop();
   ttsIndex = 0;
   ttsActive = true;
-  _startTtsKeepAlive();
   speakNext();
-}
-
-// ── Chrome TTS 15s bug workaround: keep alive with periodic pause/resume ──
-let _ttsKeepAlive = null;
-function _startTtsKeepAlive() {
-  clearInterval(_ttsKeepAlive);
-  _ttsKeepAlive = setInterval(() => {
-    if(ttsActive && !ttsPaused && speechSynthesis.speaking) {
-      speechSynthesis.pause();
-      setTimeout(() => { if(ttsActive && !ttsPaused) speechSynthesis.resume(); }, 50);
-    }
-  }, 10000);
-}
-function _stopTtsKeepAlive() { clearInterval(_ttsKeepAlive); }
-
-function _getBestJaVoice(preferName) {
-  // Try the explicitly selected voice first
-  if(preferName) {
-    const found = availableVoices.find(v => v.name === preferName);
-    if(found) return found;
-  }
-  // Fallback: find any Japanese voice
-  const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
-  return jaVoices[0] || null;
 }
 
 function speakNext() {
   if(!ttsActive || ttsIndex >= ttsLines.length) {
-    _stopTtsKeepAlive();
     ttsFinish();
     return;
   }
@@ -3337,47 +3251,32 @@ function speakNext() {
   // Update indicator
   const ind = document.getElementById('now-speaking-indicator');
   const nameEl = document.getElementById('now-speaking-name');
-  if(ind) ind.style.display = 'flex';
-  if(nameEl) nameEl.textContent = line.speaker === 'A' ? 'Aさん話し中' : 'Bさん話し中';
-  const ctrEl = document.getElementById('tts-counter');
-  if(ctrEl) ctrEl.textContent = `${ttsIndex+1} / ${ttsLines.length}`;
-  const playBtn = document.getElementById('tts-play-btn');
-  if(playBtn) playBtn.textContent = '⏸ 一時停止';
+  ind.style.display = 'flex';
+  nameEl.textContent = line.speaker === 'A' ? 'Aさん話し中' : 'Bさん話し中';
+  document.getElementById('tts-counter').textContent = `${ttsIndex+1} / ${ttsLines.length}`;
+  document.getElementById('tts-play-btn').textContent = '⏸ 一時停止';
 
   const utter = new SpeechSynthesisUtterance(line.text);
   utter.lang = 'ja-JP';
   utter.rate = rate;
 
-  // Voice selection — always fall back to Japanese voice even if panel hidden
-  const selA = document.getElementById('voice-a');
-  const selB = document.getElementById('voice-b');
-  const nameA = selA?.value ? selA.value.split('_').slice(1).join('_') : null;
-  const nameB = selB?.value ? selB.value.split('_').slice(1).join('_') : null;
-  const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
+  // Voice selection
+  const voiceA = getSelectedVoice('voice-a');
+  const voiceB = getSelectedVoice('voice-b');
+  if(line.speaker === 'A' && voiceA) utter.voice = voiceA;
+  else if(line.speaker === 'B' && voiceB) utter.voice = voiceB;
 
-  if(line.speaker === 'A') {
-    utter.voice = _getBestJaVoice(nameA) || jaVoices[0] || null;
-    utter.pitch = 1.0 + pitchDelta;
-  } else {
-    // Use second Japanese voice for B if available
-    const voiceB = _getBestJaVoice(nameB) || (jaVoices.length >= 2 ? jaVoices[1] : jaVoices[0]) || null;
-    utter.voice = voiceB;
-    utter.pitch = Math.max(0.5, 1.0 - pitchDelta);
-  }
+  // Pitch difference
+  utter.pitch = line.speaker === 'A' ? 1.0 + pitchDelta : Math.max(0.5, 1.0 - pitchDelta);
 
   utter.onend = () => {
     if(!ttsActive) return;
     ttsIndex++;
     setTimeout(speakNext, 250);
   };
-  utter.onerror = (e) => {
-    console.warn('[TTS error]', e.error, 'line:', ttsIndex);
-    ttsIndex++;
-    setTimeout(speakNext, 300);
-  };
+  utter.onerror = () => { ttsIndex++; setTimeout(speakNext, 200); };
 
-  speechSynthesis.cancel(); // clear queue before speaking
-  setTimeout(() => { if(ttsActive) speechSynthesis.speak(utter); }, 50);
+  speechSynthesis.speak(utter);
 }
 
 function ttsPause() {
@@ -3396,7 +3295,6 @@ function ttsPause() {
 function ttsStop() {
   ttsActive = false;
   ttsPaused = false;
-  _stopTtsKeepAlive();
   speechSynthesis.cancel();
   document.querySelectorAll('.chat-bubble').forEach(el => el.style.outline = '');
   const ind = document.getElementById('now-speaking-indicator');
@@ -3407,7 +3305,6 @@ function ttsStop() {
 
 function ttsFinish() {
   ttsActive = false;
-  _stopTtsKeepAlive();
   document.querySelectorAll('.chat-bubble').forEach(el => el.style.outline = '');
   const ind = document.getElementById('now-speaking-indicator');
   if(ind) ind.style.display = 'none';
@@ -3415,33 +3312,6 @@ function ttsFinish() {
   if(btn) btn.textContent = '▶ もう一度再生';
   const counter = document.getElementById('tts-counter');
   if(counter) counter.textContent = '✅ 読み上げ完了';
-}
-
-// ── Copy all news links for NotebookLM ──
-function copyNewsLinks() {
-  if(!newsItems.length) { alert('ニュースがまだ読み込まれていません'); return; }
-  const links = newsItems
-    .filter(n => n.link && n.link !== '#')
-    .map(n => n.link);
-  if(!links.length) { alert('コピーできるリンクがありません'); return; }
-  const text = links.join('\n');
-  navigator.clipboard.writeText(text).then(() => {
-    // Show toast
-    const toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;animation:fadeIn .2s ease;white-space:nowrap';
-    toast.textContent = `✅ ${links.length}件のリンクをコピーしました`;
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.style.animation='fadeOut .3s ease forwards'; setTimeout(()=>toast.remove(), 300); }, 2000);
-  }).catch(() => {
-    // Fallback: show in a textarea
-    const area = document.createElement('textarea');
-    area.value = text;
-    area.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;height:300px;z-index:9999;padding:12px;font-size:12px;background:#111;color:#fff;border:1px solid #444;border-radius:8px';
-    document.body.appendChild(area);
-    area.select();
-    document.execCommand('copy');
-    setTimeout(() => area.remove(), 3000);
-  });
 }
 
 // ==================== STUDY / PLAYLISTS ====================
@@ -3538,8 +3408,6 @@ function loadSettings() {
   const utcOn = s.showUtcFix || false;
   _syncToggle('toggle-ics', icsOn);
   _syncToggle('toggle-utcfix', utcOn);
-  // News meta toggle
-  _syncToggle('toggle-news-meta', s.showNewsMeta || false);
   applyAdvancedToggles();
 }
 
@@ -5480,89 +5348,6 @@ function renderFcHomeWidget() {
     </div>`;
 }
 
-// ==================== NEWS SELECT MODAL ====================
-let _newsSelectIdx = -1;
-
-function openNewsSelectModal() {
-  const settings = getSettings();
-  const provider = settings.aiProvider || 'gemini';
-  if(provider === 'off') { alert('設定タブでAIプロバイダーを選択してください。'); switchTab('settings'); return; }
-  if(provider === 'gemini' && !settings.geminiKey) { alert('設定タブでGemini APIキーを入力してください。'); switchTab('settings'); return; }
-  if(provider === 'claude' && !settings.apiKey) { alert('設定タブでAnthropicのAPIキーを入力してください。'); switchTab('settings'); return; }
-
-  if(!newsItems.length) { alert('ニュースがまだ読み込まれていません。少し待ってから再試行してください。'); return; }
-
-  _newsSelectIdx = selectedNewsIdx >= 0 ? selectedNewsIdx : -1;
-  renderNewsSelectList();
-
-  const overlay = document.getElementById('news-select-modal-overlay');
-  overlay.style.display = 'flex';
-}
-
-function closeNewsSelectModal() {
-  document.getElementById('news-select-modal-overlay').style.display = 'none';
-}
-
-function renderNewsSelectList() {
-  const el = document.getElementById('news-select-list');
-  if(!el) return;
-  el.innerHTML = newsItems.map((item, i) => {
-    const jaTitle = _newsTranslationCache[item.title];
-    const isSelected = i === _newsSelectIdx;
-    return `<div onclick="selectNewsForModal(${i})" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;border:2px solid ${isSelected ? 'var(--gold)' : 'transparent'};background:${isSelected ? 'rgba(232,184,75,.08)' : 'transparent'};margin-bottom:4px;transition:all .15s" onmouseover="if(${i}!==_newsSelectIdx)this.style.background='var(--card2)'" onmouseout="if(${i}!==_newsSelectIdx)this.style.background='transparent'">
-      <div style="width:24px;height:24px;border-radius:6px;background:${isSelected ? 'var(--gold)' : 'var(--card2)'};border:1px solid ${isSelected ? 'var(--gold)' : 'var(--border)'};display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:${isSelected ? '#000' : 'var(--text3)'}">
-        ${isSelected ? '✓' : String(i+1)}
-      </div>
-      <div style="flex:1;min-width:0">
-        ${jaTitle ? `<div style="font-size:13px;font-weight:${isSelected?700:500};color:var(--text);line-height:1.45">${jaTitle}</div>
-                    <div style="font-size:11px;color:var(--text3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${item.title}</div>` 
-                  : `<div style="font-size:13px;font-weight:${isSelected?700:500};color:var(--text);line-height:1.45">${item.title}</div>`}
-        <div style="font-size:10px;color:var(--text3);margin-top:3px">${item.source}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function selectNewsForModal(idx) {
-  _newsSelectIdx = idx;
-  renderNewsSelectList();
-  const okBtn = document.getElementById('news-select-ok');
-  const hint  = document.getElementById('news-select-hint');
-  if(okBtn) { okBtn.disabled = false; okBtn.style.opacity = '1'; }
-  if(hint)  {
-    const item = newsItems[idx];
-    const jaTitle = _newsTranslationCache[item?.title] || item?.title || '';
-    hint.textContent = `✅ 選択中: ${jaTitle.slice(0, 40)}${jaTitle.length > 40 ? '…' : ''}`;
-    hint.style.color = 'var(--gold)';
-  }
-}
-
-async function confirmNewsSelect() {
-  if(_newsSelectIdx < 0) return;
-  selectedNewsIdx = _newsSelectIdx;
-  closeNewsSelectModal();
-
-  // Update the "selected" label in conv section
-  const labelEl = document.getElementById('conv-selected-news');
-  const item = newsItems[selectedNewsIdx];
-  if(labelEl && item) {
-    const jaTitle = _newsTranslationCache[item.title] || item.title;
-    labelEl.innerHTML = `<span style="color:var(--gold)">📰 ${jaTitle.slice(0,60)}${jaTitle.length>60?'…':''}</span>`;
-  }
-
-  // Trigger generation immediately
-  await generateConversation();
-}
-
-// ==================== NEWS META TOGGLE ====================
-function toggleNewsMeta(on) {
-  saveSetting('showNewsMeta', on);
-  _syncToggle('toggle-news-meta', on);
-  // Re-fetch news to apply (titles already cached, just re-render descriptions)
-  _allNewsItems = []; newsItems = [];
-  fetchNews();
-}
-
 window.addEventListener('DOMContentLoaded', () => {
   loadTheme();
   initClock();
@@ -5612,11 +5397,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Apply translation/AI settings on load
   const _s0 = getSettings();
-  loadVoices(); // ensure voices initialized for settings panel
   _applyTranslationButtons(_s0.translationService || 'mymemory');
   _applyAiProviderButtons(_s0.aiProvider || 'gemini');
-  // News meta toggle (default OFF)
-  _syncToggle('toggle-news-meta', _s0.showNewsMeta || false);
 });
 </script>
 </body>
