@@ -1812,6 +1812,30 @@ body::after {
     </div>
   </div>
 
+
+  <!-- ===== Card Edit Modal ===== -->
+  <div id="card-edit-modal-overlay" onclick="if(event.target===this)closeCardEditModal()" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;width:100%;max-width:480px;box-shadow:0 16px 48px rgba(0,0,0,.7);animation:fadeIn .2s ease">
+      <input type="hidden" id="card-edit-id">
+      <div style="font-size:15px;font-weight:700;margin-bottom:16px">✏️ Edit Card</div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Front (Question)</label>
+        <textarea id="card-edit-front" rows="2" style="resize:none;font-size:14px;width:100%"></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Back (Answer)</label>
+        <textarea id="card-edit-back" rows="2" style="resize:none;font-size:14px;width:100%"></textarea>
+      </div>
+      <div class="form-group" style="margin-bottom:18px">
+        <label>Deck</label>
+        <input type="text" id="card-edit-deck" list="fc-deck-list" style="font-size:13px">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-secondary" onclick="closeCardEditModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitCardEdit()">Save</button>
+      </div>
+    </div>
+  </div>
 </div><!-- /main -->
 
 <!-- ===== タスク編集モーダル ===== -->
@@ -3251,14 +3275,13 @@ let _gTtsAudio = null;
 let _rvSpeaking = false;
 
 function _isRvReady() {
-  return typeof responsiveVoice !== 'undefined' && responsiveVoice.voiceSupport();
+  return typeof responsiveVoice !== 'undefined';
 }
 
 async function _playRvTts(text, rate, speaker) {
-  if(!_isRvReady()) {
-    console.warn('[RV] ResponsiveVoice not loaded');
-    return;
-  }
+  // Wait up to 3s for RV to load
+  for(let i=0;i<30;i++){if(typeof responsiveVoice!=='undefined')break;await new Promise(r=>setTimeout(r,100));}
+  if(typeof responsiveVoice==='undefined'){console.warn('[RV] not loaded');return;}
   return new Promise((resolve) => {
     _rvSpeaking = true;
     // Japanese Female / Japanese Male — both work, pitch change makes them distinct
@@ -4921,15 +4944,21 @@ function _renderWeatherStrip(data) {
     const wrap  = document.getElementById(wrapId);
     const notice = document.getElementById(noticeId);
     if(strip) strip.innerHTML = html;
-    // Show strip only in 'strip' mode
-    if(wrap)  wrap.style.display = useInline ? 'none' : 'block';
+    // Show strip only in 'strip' mode, but ALWAYS show holiday notice
+    if(wrap)  wrap.style.display = (!useInline && items.length) ? 'block' : 'none';
     if(notice) {
       if(isHoliday && tz==='MY') {
         const hname = getTodayHolidayName();
-        notice.innerHTML = `🏛️ ${hname?hname+' — ':''}Univillage ジムは休業です`;
+        notice.innerHTML = `🏋️ ${hname?hname+' — ':''}Univillage ジムは休業です`;
+        // Show notice directly, independent of weather bar visibility
         notice.style.display = 'block';
+        notice.style.marginTop = '4px';
+        // Ensure parent wrap is visible when notice should show
+        if(wrap && useInline) wrap.style.display = 'block';
       } else {
         notice.style.display = 'none';
+        // Hide wrap again if in inline mode and no notice
+        if(wrap && useInline) wrap.style.display = 'none';
       }
     }
   });
@@ -5300,6 +5329,7 @@ function fcNextCard(knew) {
 function fcReveal() {
   _fcRevealed = true;
   renderFcSession();
+  renderFcHomeWidget();
 }
 
 function fcResetSession() {
@@ -5415,7 +5445,7 @@ function renderCardsTab() {
       const lv  = Math.min(c.level, 6);
       const lc  = lv === 0 ? 'var(--orange)' : lv >= 5 ? 'var(--green)' : 'var(--blue)';
       const ll  = ['まだ','×1','×2','×3','×4','習得','完全'][lv];
-      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--card2);border:1px solid var(--border);margin-bottom:6px">
+      return `<div onclick="openCardEditModal(${c.id})" style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--card2);border:1px solid var(--border);margin-bottom:6px;cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">${c.front}</div>
           <div style="font-size:12px;color:var(--text3);line-height:1.5">${c.back}</div>
@@ -5424,9 +5454,9 @@ function renderCardsTab() {
             <span style="font-size:10px;color:${lc};background:${lc}22;border:1px solid ${lc}44;border-radius:8px;padding:1px 7px">${ll}</span>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
-          <button onclick="resetCardProgress(${c.id})" title="進捗リセット" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--text3);cursor:pointer;font-size:10px;padding:3px 6px;transition:all .15s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text3)'">↺</button>
-          <button onclick="deleteFlashCard(${c.id})" title="削除" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--text3);cursor:pointer;font-size:10px;padding:3px 6px;transition:all .15s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">✕</button>
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0" onclick="event.stopPropagation()">
+          <button onclick="resetCardProgress(${c.id})" title="Reset progress" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--text3);cursor:pointer;font-size:10px;padding:3px 6px;transition:all .15s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text3)'">↺</button>
+          <button onclick="deleteFlashCard(${c.id})" title="Delete" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--text3);cursor:pointer;font-size:10px;padding:3px 6px;transition:all .15s" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">✕</button>
         </div>
       </div>`;
     }).join('');
@@ -5572,6 +5602,36 @@ function toggleNewsMeta(on) {
   // Re-fetch news to apply (titles already cached, just re-render descriptions)
   _allNewsItems = []; newsItems = [];
   fetchNews();
+}
+
+
+// ==================== CARD EDIT MODAL ====================
+function openCardEditModal(id) {
+  const card = getFlashCards().find(c => c.id === id);
+  if(!card) return;
+  document.getElementById('card-edit-id').value = id;
+  document.getElementById('card-edit-front').value = card.front;
+  document.getElementById('card-edit-back').value  = card.back;
+  document.getElementById('card-edit-deck').value  = card.deck;
+  document.getElementById('card-edit-modal-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('card-edit-front')?.focus(), 50);
+}
+function closeCardEditModal() {
+  document.getElementById('card-edit-modal-overlay').style.display = 'none';
+}
+function submitCardEdit() {
+  const id    = Number(document.getElementById('card-edit-id').value);
+  const front = document.getElementById('card-edit-front').value.trim();
+  const back  = document.getElementById('card-edit-back').value.trim();
+  const deck  = document.getElementById('card-edit-deck').value.trim() || '既定';
+  if(!front || !back) { alert('Front and back are required'); return; }
+  const cards = getFlashCards();
+  const idx   = cards.findIndex(c => c.id === id);
+  if(idx !== -1) { cards[idx] = { ...cards[idx], front, back, deck }; }
+  saveFlashCards(cards);
+  closeCardEditModal();
+  renderCardsTab();
+  fcStartSession();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
