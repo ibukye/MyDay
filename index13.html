@@ -906,11 +906,11 @@ body::after {
   <button class="tab-btn active" onclick="switchTab('home')">⬡ HOME</button>
   <button class="tab-btn" onclick="switchTab('today')">📋 今日</button>
   <button class="tab-btn" onclick="switchTab('weekly')">📅 毎週</button>
-  <button class="tab-btn" onclick="switchTab('news')">📰 News</button>
-  <button class="tab-btn" onclick="switchTab('study')">📚 Study</button>
-  <button class="tab-btn" onclick="switchTab('timer')">⏱ Timer</button>
+  <button class="tab-btn" onclick="switchTab('news')">📰 ニュース</button>
+  <button class="tab-btn" onclick="switchTab('study')">📚 勉強</button>
+  <button class="tab-btn" onclick="switchTab('timer')">⏱ タイマー</button>
   <button class="tab-btn" onclick="switchTab('daily')">📓 Daily</button>
-  <button class="tab-btn" onclick="switchTab('cards')">🧠 Recall</button>
+  <button class="tab-btn" onclick="switchTab('cards')">🃏 カード</button>
   <button class="tab-btn" onclick="switchTab('settings')">⚙️ 設定</button>
 </div>
 
@@ -1114,7 +1114,7 @@ body::after {
       <!-- LEFT: Schedule -->
       <div style="display:flex;flex-direction:column;min-height:0">
         <div class="card" style="flex:1;display:flex;flex-direction:column;min-height:0">
-          <div class="card-title">📍 Today's Schedule
+          <div class="card-title">📍 今日のスケジュール
             <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openSchedModal()">＋ 追加</button>
           </div>
           <!-- 天気予報ストリップ -->
@@ -1223,8 +1223,8 @@ body::after {
   <!-- ===== WEEKLY TAB ===== -->
   <div id="tab-weekly" class="tab-content">
     <div class="card">
-      <div class="card-title">Weekly Schedule</div>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Recurring events set here appear only in this tab.</p>
+      <div class="card-title">毎週の固定予定</div>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:16px">ここで設定した予定はこのタブからのみ確認できます。</p>
 
       <div id="weekly-form-area" class="add-form" style="display:block;margin-bottom:20px">
         <div class="form-row">
@@ -1261,7 +1261,7 @@ body::after {
     <div class="grid-2">
       <!-- Left: Headlines -->
       <div class="card">
-        <div class="card-title">📰 Latest News
+        <div class="card-title">📰 最新ニュース
           <div style="display:flex;gap:6px;margin-left:auto">
             <button class="btn btn-sm btn-secondary" onclick="copyNewsLinks()" title="全リンクをコピー（NotebookLM用）">📋 リンクをコピー</button>
             <button class="btn btn-sm btn-secondary" onclick="fetchNews()">🔄 更新</button>
@@ -1317,13 +1317,13 @@ body::after {
   <!-- ===== STUDY TAB ===== -->
   <div id="tab-study" class="tab-content">
     <div class="card">
-      <div class="card-title">📚 Playlist
+      <div class="card-title">📚 勉強プレイリスト
         <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="toggleAddForm('playlist-form')">＋ 追加</button>
       </div>
       <div id="playlist-form" class="add-form">
         <div class="form-row">
           <div class="form-group" style="flex:2">
-            <label>Playlist Name</label>
+            <label>プレイリスト名</label>
             <input type="text" id="pl-name" placeholder="例：英語リスニング講座">
           </div>
           <div class="form-group" style="flex:3">
@@ -1343,8 +1343,8 @@ body::after {
       <div id="playlist-list"></div>
 
       <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
-        <div class="card-title">⚡ Quick Start</div>
-        <p style="font-size:13px;color:var(--text3);margin-bottom:12px">Registered playlists — open instantly.</p>
+        <div class="card-title">⚡ クイックスタート</div>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:12px">登録済みプレイリストをすぐに開けます。</p>
         <div id="quick-start-grid" style="display:flex;flex-wrap:wrap;gap:8px"></div>
       </div>
     </div>
@@ -1504,7 +1504,7 @@ body::after {
     <div class="grid-2" style="gap:16px">
       <!-- Left: Card list + add -->
       <div class="card">
-        <div class="card-title">🃏 Recall Card Manager
+        <div class="card-title">🃏 フラッシュカード管理
           <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="toggleAddForm('fc-add-form')">＋ 追加</button>
         </div>
         <div id="fc-add-form" class="add-form">
@@ -1542,7 +1542,7 @@ body::after {
 
       <!-- Right: Study session -->
       <div class="card" style="display:flex;flex-direction:column">
-        <div class="card-title">📖 Study Session
+        <div class="card-title">📖 学習セッション
           <button class="btn btn-sm btn-secondary" style="margin-left:auto" onclick="fcResetSession()">↺ リセット</button>
         </div>
         <div id="fc-session" style="flex:1;display:flex;flex-direction:column;justify-content:center;min-height:400px"></div>
@@ -1552,79 +1552,174 @@ body::after {
 
   <!-- ===== SETTINGS TAB ===== -->
   <div id="tab-settings" class="tab-content">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <div class="card">
+      <div class="card-title">⚙️ 設定</div>
 
-      <!-- ══ LEFT COLUMN ══ -->
-      <div style="display:flex;flex-direction:column;gap:16px">
-
-        <!-- General -->
-        <div class="card">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">👤 General</div>
-          <div class="setting-row">
-          <div>
-            <div class="setting-label">Name</div>
-            <div class="setting-desc">Used in motivational messages</div>
-          </div>
-          <input type="text" id="name-input" style="width:150px" placeholder="Your name" onchange="saveSetting('name',this.value)">
+      <!-- タイムゾーン -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">タイムゾーン / 場所</div>
+          <div class="setting-desc">天気予報の取得先と祝日情報が変わります</div>
         </div>
-          <div class="setting-row">
+        <div style="display:flex;gap:6px">
+          <button id="tz-btn-my" onclick="setTimezone('MY')"
+            style="padding:5px 14px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:12px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🇲🇾 Malaysia</button>
+          <button id="tz-btn-jp" onclick="setTimezone('JP')"
+            style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🇯🇵 Japan</button>
+        </div>
+      </div>
+
+      <!-- Univillage ジム休業日マーク -->
+      <div class="setting-row" id="utm-holiday-row" style="display:none">
+        <div>
+          <div class="setting-label">Univillage ジム休業日</div>
+          <div class="setting-desc" id="utm-holiday-desc">今日を大学休日（Univillage ジム休業）としてマーク</div>
+        </div>
+        <button id="utm-holiday-btn" onclick="toggleUtmHoliday()"
+          style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Univillage 休業日にする</button>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">就寝リマインダー時間</div>
+          <div class="setting-desc">この時間以降に警告バナーを表示します</div>
+        </div>
+        <input type="time" id="sleep-time-input" style="width:120px" value="23:00" onchange="saveSetting('sleepTime',this.value)">
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">起床目標時間</div>
+          <div class="setting-desc">モチベーションメッセージで使用します</div>
+        </div>
+        <input type="time" id="wake-time-input" style="width:120px" value="06:30" onchange="saveSetting('wakeTime',this.value)">
+      </div>
+
+      <!-- ── 翻訳サービス設定 ── -->
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">🌐 ニュース翻訳</div>
+
+        <div class="setting-row">
           <div>
-            <div class="setting-label">Timezone</div>
-            <div class="setting-desc">Weather & holidays</div>
+            <div class="setting-label">翻訳サービス</div>
+            <div class="setting-desc">ニュースタイトルを日本語に自動翻訳します</div>
           </div>
           <div style="display:flex;gap:6px">
-            <button id="tz-btn-my" onclick="setTimezone('MY')" style="padding:5px 12px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🇲🇾 Malaysia</button>
-            <button id="tz-btn-jp" onclick="setTimezone('JP')" style="padding:5px 12px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🇯🇵 Japan</button>
-          </div>
-        </div>
-          <div class="setting-row">
-          <div>
-            <div class="setting-label">Bedtime reminder</div>
-            <div class="setting-desc">Banner shown after this time</div>
-          </div>
-          <input type="time" id="sleep-time-input" style="width:110px" value="23:00" onchange="saveSetting('sleepTime',this.value)">
-        </div>
-          <div class="setting-row">
-          <div>
-            <div class="setting-label">Wake-up goal</div>
-            <div class="setting-desc">Used in motivational messages</div>
-          </div>
-          <input type="time" id="wake-time-input" style="width:110px" value="06:30" onchange="saveSetting('wakeTime',this.value)">
-        </div>
-          <div id="utm-holiday-row" style="display:none" class="setting-row">
-            <div>
-              <div class="setting-label">Univillage Gym Holiday</div>
-              <div class="setting-desc" id="utm-holiday-desc">Mark today as university holiday</div>
-            </div>
-            <button id="utm-holiday-btn" onclick="toggleUtmHoliday()" style="padding:5px 12px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Mark as holiday</button>
+            <button id="trans-btn-off" onclick="setTranslationService('off')"
+              style="padding:5px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">OFF</button>
+            <button id="trans-btn-mymemory" onclick="setTranslationService('mymemory')"
+              style="padding:5px 10px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">MyMemory</button>
+            <button id="trans-btn-deepl" onclick="setTranslationService('deepl')"
+              style="padding:5px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">DeepL</button>
           </div>
         </div>
 
-        <!-- News & Translation -->
-        <div class="card">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">📰 News</div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Translation</div>
-              <div class="setting-desc">Auto-translate headlines to Japanese</div>
-            </div>
-            <div style="display:flex;gap:5px">
-              <button id="trans-btn-off" onclick="setTranslationService('off')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">OFF</button>
-              <button id="trans-btn-mymemory" onclick="setTranslationService('mymemory')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">MyMemory</button>
-              <button id="trans-btn-deepl" onclick="setTranslationService('deepl')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">DeepL</button>
-            </div>
-          </div>
-          <div id="deepl-key-row" style="display:none" class="setting-row">
-            <div><div class="setting-label">DeepL API Key</div><div class="setting-desc"><a href="https://www.deepl.com/ja/pro-api" target="_blank" style="color:var(--blue)">Free plan</a> — 500K chars/mo</div></div>
-            <div style="display:flex;gap:6px">
-              <input type="password" id="deepl-key-input" style="width:180px" placeholder="xxxx:fx" onchange="saveSetting('deeplKey',this.value)">
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('deepl-key-input').type=document.getElementById('deepl-key-input').type==='password'?'text':'password'">👁</button>
-            </div>
-          </div>
-          <div class="setting-row">
+        <div id="deepl-key-row" style="display:none" class="setting-row">
           <div>
-            <div class="setting-label">Show score / comments</div>
-            <div class="setting-desc">e.g. "128pt / 49 comments"</div>
+            <div class="setting-label">DeepL APIキー</div>
+            <div class="setting-desc"><a href="https://www.deepl.com/ja/pro-api" target="_blank" style="color:var(--blue)">DeepL無料プラン</a>で取得（月50万文字まで無料）</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="password" id="deepl-key-input" style="width:200px" placeholder="xxxx-xxxx-xxxx-xxxx:fx" onchange="saveSetting('deeplKey',this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('deepl-key-input').type=document.getElementById('deepl-key-input').type==='password'?'text':'password'">👁</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AI会話設定 ── -->
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">🤖 AI会話機能</div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">AIプロバイダー</div>
+            <div class="setting-desc">ニュースのA/B会話解説に使用します</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button id="ai-btn-off" onclick="setAiProvider('off')"
+              style="padding:5px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">非表示</button>
+            <button id="ai-btn-gemini" onclick="setAiProvider('gemini')"
+              style="padding:5px 10px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Gemini</button>
+            <button id="ai-btn-claude" onclick="setAiProvider('claude')"
+              style="padding:5px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Claude</button>
+          </div>
+        </div>
+
+        <div id="gemini-key-row" class="setting-row">
+          <div>
+            <div class="setting-label">Gemini APIキー</div>
+            <div class="setting-desc"><a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--blue)">Google AI Studio</a>で無料取得（1日1500リクエスト）</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="password" id="gemini-key-input" style="width:200px" placeholder="AIza..." onchange="saveSetting('geminiKey',this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('gemini-key-input').type=document.getElementById('gemini-key-input').type==='password'?'text':'password'">👁</button>
+          </div>
+        </div>
+
+        <div id="claude-key-row" style="display:none" class="setting-row">
+          <div>
+            <div class="setting-label">Anthropic APIキー</div>
+            <div class="setting-desc"><a href="https://console.anthropic.com" target="_blank" style="color:var(--blue)">console.anthropic.com</a>で取得（有料）</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="password" id="api-key-input" style="width:200px" placeholder="sk-ant-..." onchange="saveSetting('apiKey',this.value)">
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('api-key-input').type=document.getElementById('api-key-input').type==='password'?'text':'password'">👁</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">名前（呼び方）</div>
+          <div class="setting-desc">モチベーションメッセージで使います</div>
+        </div>
+        <input type="text" id="name-input" style="width:150px" placeholder="あなたの名前" onchange="saveSetting('name',this.value)">
+      </div>
+
+      <!-- ── 解説Talk 音声設定 ── -->
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">🎤 解説Talk 音声設定</div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Aさんの声</div>
+          </div>
+          <select id="voice-a" style="width:180px;font-size:12px"></select>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Bさんの声</div>
+          </div>
+          <select id="voice-b" style="width:180px;font-size:12px"></select>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">読み上げ速度</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="range" id="tts-rate" min="0.7" max="1.5" step="0.1" value="1.0" style="width:120px" oninput="document.getElementById('tts-rate-val').textContent=this.value+'x'">
+            <span id="tts-rate-val" style="font-size:12px;color:var(--text2);min-width:32px">1.0x</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">ピッチ差（A vs B）</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="range" id="tts-pitch" min="0" max="0.6" step="0.1" value="0.3" style="width:120px" oninput="document.getElementById('tts-pitch-val').textContent=this.value">
+            <span id="tts-pitch-val" style="font-size:12px;color:var(--text2);min-width:24px">0.3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ニュース表示設定 ── -->
+      <div style="margin-top:4px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">📰 ニュース表示設定</div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">スコア・コメント数を表示</div>
+            <div class="setting-desc">「128点 / 49コメント」などのメタ情報</div>
           </div>
           <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
             <input type="checkbox" id="toggle-news-meta" onchange="toggleNewsMeta(this.checked)" style="opacity:0;width:0;height:0">
@@ -1633,114 +1728,80 @@ body::after {
             </span>
           </label>
         </div>
-        </div>
-
-        <!-- Weather -->
-        <div class="card">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">☁️ Weather</div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">Display mode</div>
-              <div class="setting-desc" id="weather-mode-desc">Show weather next to time labels</div>
-            </div>
-            <div style="display:flex;gap:5px">
-              <button id="wmode-btn-inline" onclick="setWeatherMode('inline')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🕐 Inline</button>
-              <button id="wmode-btn-strip" onclick="setWeatherMode('strip')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">☁️ Strip</button>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ══ RIGHT COLUMN ══ -->
-      <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <button class="btn btn-danger" onclick="if(confirm('全データを削除しますか？'))clearAllData()">🗑️ 全データを削除</button>
+      </div>
 
-        <!-- AI / Talk -->
-        <div class="card">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">🤖 AI Talk</div>
-          <div class="setting-row">
-            <div>
-              <div class="setting-label">AI Provider</div>
-              <div class="setting-desc">Used for news talk generation</div>
-            </div>
-            <div style="display:flex;gap:5px">
-              <button id="ai-btn-off" onclick="setAiProvider('off')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Hide</button>
-              <button id="ai-btn-gemini" onclick="setAiProvider('gemini')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Gemini</button>
-              <button id="ai-btn-claude" onclick="setAiProvider('claude')" style="padding:4px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Claude</button>
-            </div>
+      <!-- Google Calendar 連携 -->
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">📅 Google Calendar 同期</div>
+
+        <!-- ICS URL 直接取得（Pythonスクリプト不要） -->
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🔗 方法① ICS URL（推奨・簡単）</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.7">
+            Google カレンダー → 設定 → 統合 → <strong>「非公開のアドレス（ICS形式）」</strong> をコピーして貼り付け。<br>
+            Pythonスクリプト不要。ページを開くたびに自動で今日の予定を取得します。
           </div>
-          <div id="gemini-key-row" class="setting-row">
-            <div><div class="setting-label">Gemini API Key</div><div class="setting-desc"><a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--blue)">Google AI Studio</a> — free 1500 req/day</div></div>
-            <div style="display:flex;gap:6px">
-              <input type="password" id="gemini-key-input" style="width:180px" placeholder="AIza..." onchange="saveSetting('geminiKey',this.value)">
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('gemini-key-input').type=document.getElementById('gemini-key-input').type==='password'?'text':'password'">👁</button>
-            </div>
+          <div class="form-group" style="margin-bottom:8px">
+            <label>Google Calendar ICS URL</label>
+            <input type="text" id="ics-url-input" placeholder="https://calendar.google.com/calendar/ical/..." style="font-size:12px"
+              onchange="saveSetting('icsUrl',this.value.trim())">
           </div>
-          <div id="claude-key-row" style="display:none" class="setting-row">
-            <div><div class="setting-label">Anthropic API Key</div><div class="setting-desc"><a href="https://console.anthropic.com" target="_blank" style="color:var(--blue)">console.anthropic.com</a> (paid)</div></div>
-            <div style="display:flex;gap:6px">
-              <input type="password" id="api-key-input" style="width:180px" placeholder="sk-ant-..." onchange="saveSetting('apiKey',this.value)">
-              <button class="btn btn-secondary btn-sm" onclick="document.getElementById('api-key-input').type=document.getElementById('api-key-input').type==='password'?'text':'password'">👁</button>
-            </div>
-          </div>
-          <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:14px">
-            <div style="font-size:11px;color:var(--text3);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em">🎤 Voice (Talk)</div>
-            <div class="setting-row">
-              <div class="setting-label">Speaker A</div>
-              <select id="voice-a" style="width:160px;font-size:12px"></select>
-            </div>
-            <div class="setting-row">
-              <div class="setting-label">Speaker B</div>
-              <select id="voice-b" style="width:160px;font-size:12px"></select>
-            </div>
-            <div class="setting-row">
-              <div class="setting-label">Speed</div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <input type="range" id="tts-rate" min="0.7" max="1.5" step="0.1" value="1.0" style="width:110px" oninput="document.getElementById('tts-rate-val').textContent=this.value+'x'">
-                <span id="tts-rate-val" style="font-size:12px;color:var(--text2);min-width:30px">1.0x</span>
-              </div>
-            </div>
-            <div class="setting-row">
-              <div class="setting-label">Pitch gap</div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <input type="range" id="tts-pitch" min="0" max="0.6" step="0.1" value="0.3" style="width:110px" oninput="document.getElementById('tts-pitch-val').textContent=this.value">
-                <span id="tts-pitch-val" style="font-size:12px;color:var(--text2);min-width:22px">0.3</span>
-              </div>
-            </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="syncIcsDirect()">🔄 今すぐ同期</button>
+            <span id="ics-direct-status" style="font-size:12px;color:var(--text3)"></span>
           </div>
         </div>
 
-        <!-- Google Calendar -->
-        <div class="card">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">📅 Google Calendar</div>
-          <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
-            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">🔗 ICS URL <span style="color:var(--green);font-size:10px;font-weight:400">recommended</span></div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">Google Calendar → Settings → Integration → Copy private ICS URL</div>
-            <input type="text" id="ics-url-input" placeholder="https://calendar.google.com/calendar/ical/..." style="font-size:11px;width:100%;margin-bottom:8px" onchange="saveSetting('icsUrl',this.value.trim())">
-            <div style="display:flex;gap:8px;align-items:center">
-              <button class="btn btn-primary btn-sm" onclick="syncIcsDirect()">🔄 Sync now</button>
-              <span id="ics-direct-status" style="font-size:11px;color:var(--text3)"></span>
-            </div>
+        <!-- OAuth（Netlifyなど本番URLが必要） -->
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">🔐 方法② Google OAuth API</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.7">
+            NetlifyなどにデプロイしたURL上でのみ動作します。<br>
+            <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue)">Google Cloud Console</a> でOAuth クライアントIDを取得してください。
           </div>
-          <div style="background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
-            <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px">🔐 OAuth API</div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:8px">HTTPS deployment required. Get client ID from <a href="https://console.cloud.google.com" target="_blank" style="color:var(--blue)">Google Cloud Console</a>.</div>
-            <input type="text" id="google-client-id-input" style="font-size:11px;width:100%;margin-bottom:8px" placeholder="xxxx.apps.googleusercontent.com" onchange="saveSetting('googleClientId',this.value.trim())">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-secondary btn-sm" onclick="connectGoogleCalendar()">🔗 Connect</button>
-              <button class="btn btn-secondary btn-sm" id="gcal-disconnect-btn" onclick="disconnectGoogleCalendar()" style="display:none">🔌 Disconnect</button>
-              <span id="gcal-status" style="font-size:11px;color:var(--text3)"></span>
-            </div>
+          <div class="form-group" style="margin-bottom:8px">
+            <label>OAuth クライアントID</label>
+            <input type="text" id="google-client-id-input" style="font-size:12px" placeholder="xxxx.apps.googleusercontent.com"
+              onchange="saveSetting('googleClientId',this.value.trim())">
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-secondary btn-sm" onclick="connectGoogleCalendar()">🔗 OAuth で連携</button>
+            <button class="btn btn-secondary btn-sm" id="gcal-disconnect-btn" onclick="disconnectGoogleCalendar()" style="display:none">🔌 連携解除</button>
+            <span id="gcal-status" style="font-size:12px;color:var(--text3)"></span>
           </div>
         </div>
+      </div>
 
-        <!-- Advanced -->
-        <div class="card">
-          <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)">🔧 Advanced</div>
-          <div class="setting-row">
+      <!-- 上級者向け設定 -->
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">☁️ 天気表示設定</div>
+
+        <div class="setting-row">
           <div>
-            <div class="setting-label">ICS file import</div>
-            <div class="setting-desc">Show drop zone in Today tab</div>
+            <div class="setting-label">天気の表示モード</div>
+            <div class="setting-desc" id="weather-mode-desc">時刻の真横に天気アイコンと気温を表示します</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button id="wmode-btn-inline" onclick="setWeatherMode('inline')"
+              style="padding:5px 12px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🕐 時刻横</button>
+            <button id="wmode-btn-strip" onclick="setWeatherMode('strip')"
+              style="padding:5px 12px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">☁️ 上部バー</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 上級者向け設定 -->
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">🔧 上級者向け設定</div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">ICSファイル手動取込</div>
+            <div class="setting-desc">今日タブに .ics ドロップエリアを表示</div>
           </div>
           <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
             <input type="checkbox" id="toggle-ics" onchange="applyAdvancedToggles()" style="opacity:0;width:0;height:0">
@@ -1749,10 +1810,11 @@ body::after {
             </span>
           </label>
         </div>
-          <div class="setting-row">
+
+        <div class="setting-row">
           <div>
-            <div class="setting-label">UTC→MYT fix button</div>
-            <div class="setting-desc">Show +8h fix button in Today tab</div>
+            <div class="setting-label">UTC→MYT 時刻修正ボタン</div>
+            <div class="setting-desc">今日タブに +8時間修正ボタンを表示</div>
           </div>
           <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
             <input type="checkbox" id="toggle-utcfix" onchange="applyAdvancedToggles()" style="opacity:0;width:0;height:0">
@@ -1761,11 +1823,16 @@ body::after {
             </span>
           </label>
         </div>
-          <div style="padding-top:14px;margin-top:4px;border-top:1px solid var(--border)">
-            <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete all data?'))clearAllData()">🗑️ Clear all data</button>
-          </div>
-        </div>
+      </div>
+    </div>
 
+    <div class="card">
+      <div class="card-title">💡 使い方のヒント</div>
+      <div style="font-size:13px;color:var(--text2);line-height:2">
+        <p>✦ <strong>毎朝の習慣</strong>：このアプリを開いてスケジュールを確認する → タスクに優先度をつける → 勉強を開始する</p>
+        <p>✦ <strong>就寝改善</strong>：設定した時間になると上部に警告が表示されます</p>
+        <p>✦ <strong>後回し防止</strong>：タスクに必ず締め切りと優先度を設定する習慣をつけましょう</p>
+        <p>✦ <strong>毎週の予定</strong>：「毎週の予定」タブは固定の繰り返し予定専用です</p>
       </div>
     </div>
   </div>
@@ -1937,7 +2004,7 @@ function switchTab(id) {
   next.classList.add('active','cyber-enter');
   setTimeout(() => next.classList.remove('cyber-enter'), 400);
 
-  const tabMap = { home:'HOME', today:'今日', weekly:'毎週', news:'News', study:'Study', timer:'Timer', daily:'Daily', cards:'Recall', settings:'設定' };
+  const tabMap = { home:'HOME', today:'今日', weekly:'毎週', news:'ニュース', study:'勉強', timer:'タイマー', daily:'Daily', cards:'カード', settings:'設定' };
   document.querySelectorAll('.tab-btn').forEach(b => {
     if(tabMap[id] && b.textContent.includes(tabMap[id])) b.classList.add('active');
   });
@@ -3281,19 +3348,22 @@ function speakNext() {
   utter.lang = 'ja-JP';
   utter.rate = rate;
 
-  // Voice selection — only assign if a Japanese voice exists; else rely on lang='ja-JP'
+  // Voice selection — always fall back to Japanese voice even if panel hidden
+  const selA = document.getElementById('voice-a');
+  const selB = document.getElementById('voice-b');
+  const nameA = selA?.value ? selA.value.split('_').slice(1).join('_') : null;
+  const nameB = selB?.value ? selB.value.split('_').slice(1).join('_') : null;
   const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
-  if(jaVoices.length > 0) {
-    const selA = document.getElementById('voice-a');
-    const selB = document.getElementById('voice-b');
-    const nameA = selA?.value ? selA.value.split('_').slice(1).join('_') : null;
-    const nameB = selB?.value ? selB.value.split('_').slice(1).join('_') : null;
-    const voiceA = _getBestJaVoice(nameA) || jaVoices[0];
-    const voiceB = _getBestJaVoice(nameB) || (jaVoices.length >= 2 ? jaVoices[1] : jaVoices[0]);
-    utter.voice = line.speaker === 'A' ? voiceA : voiceB;
+
+  if(line.speaker === 'A') {
+    utter.voice = _getBestJaVoice(nameA) || jaVoices[0] || null;
+    utter.pitch = 1.0 + pitchDelta;
+  } else {
+    // Use second Japanese voice for B if available
+    const voiceB = _getBestJaVoice(nameB) || (jaVoices.length >= 2 ? jaVoices[1] : jaVoices[0]) || null;
+    utter.voice = voiceB;
+    utter.pitch = Math.max(0.5, 1.0 - pitchDelta);
   }
-  // If no Japanese voice found, utter.lang='ja-JP' alone will trigger OS Japanese TTS
-  utter.pitch = line.speaker === 'A' ? 1.0 + pitchDelta : Math.max(0.5, 1.0 - pitchDelta);
 
   utter.onend = () => {
     if(!ttsActive) return;
@@ -3404,7 +3474,7 @@ function renderPlaylists() {
   const qs = document.getElementById('quick-start-grid');
 
   if(!items.length) {
-    container.innerHTML = '<div class="empty-state"><div class="emoji">📚</div>No playlists yet<br><small>Add one with the ＋ button above</small></div>';
+    container.innerHTML = '<div class="empty-state"><div class="emoji">📚</div>プレイリストがありません<br><small>上の「＋ 追加」から追加してください</small></div>';
     qs.innerHTML = '';
     return;
   }
@@ -5233,7 +5303,7 @@ function renderFcSession() {
   if(!el) return;
   const all = getFlashCards().filter(c => !_fcDeckFilter || c.deck === _fcDeckFilter);
   if(!all.length) {
-    el.innerHTML = `<div class="empty-state"><div class="emoji">🃏</div>カードがありません<br><small>Add cards using the form on the left</small></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="emoji">🃏</div>カードがありません<br><small>左のフォームから追加してください</small></div>`;
     return;
   }
   const card = _fcSession[_fcSessionIdx];
@@ -5328,7 +5398,7 @@ function renderCardsTab() {
   const listEl = document.getElementById('fc-card-list');
   if(!listEl) return;
   if(!all.length) {
-    listEl.innerHTML = '<div class="empty-state"><div class="emoji">🃏</div>No cards yet</div>';
+    listEl.innerHTML = '<div class="empty-state"><div class="emoji">🃏</div>カードがまだありません</div>';
   } else {
     listEl.innerHTML = filtered.map(c => {
       const lv  = Math.min(c.level, 6);
@@ -5370,7 +5440,7 @@ function renderFcHomeWidget() {
   if(!all.length) {
     el.innerHTML = `<div style="text-align:center;padding:12px">
       <div style="font-size:28px;margin-bottom:8px">🃏</div>
-      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">No cards yet</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">カードがまだありません</div>
       <button onclick="switchTab('cards')" class="btn btn-primary btn-sm">カードを追加する</button>
     </div>`;
     if(progEl) progEl.textContent = '';
