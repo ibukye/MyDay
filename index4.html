@@ -745,23 +745,17 @@ body::after {
 
 /* ── FULL-DAY TIMELINE GRID ── */
 .timeline-grid { position:relative;padding-left:72px;overflow:visible; }
-.timeline-grid.inline { padding-left:96px; }
 .tg-hour-label {
   position:absolute;left:0;width:68px;text-align:right;padding-right:4px;
   font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);
   transform:translateY(-7px);pointer-events:none;z-index:2;
   display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;
 }
-.tg-hour-label.inline {
-  width:92px;flex-direction:row;align-items:center;gap:4px;justify-content:flex-end;
-  transform:translateY(-8px);white-space:nowrap;
-}
 .tg-now-line {
   position:absolute;left:-72px;right:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--gold),var(--gold));
   z-index:5;pointer-events:none;
 }
-.tg-now-line.inline { left:-96px; }
 .tg-now-line::before {
   content:'▶';position:absolute;left:-14px;top:-7px;
   font-size:10px;color:var(--gold);
@@ -942,7 +936,7 @@ body::after {
         <!-- 天気バー -->
         <div id="home-weather-bar" style="flex-shrink:0;margin-bottom:6px;display:none">
           <div id="home-weather-inner" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none"></div>
-          <div id="home-holiday-notice" style="display:none;font-size:11px;color:var(--green);background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:6px;padding:4px 8px;margin-top:4px">🏛️ 祝日のため Univillage ジムは休業です</div>
+          <div id="home-holiday-notice" style="display:none;font-size:11px;color:var(--green);background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:6px;padding:4px 8px;margin-top:4px">🏛️ 祝日のため UTM ジムは 9:00〜13:00 営業</div>
         </div>
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-shrink:0;flex-wrap:wrap">
           <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(232,184,75,.12);border:1px solid rgba(232,184,75,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--gold)">
@@ -1106,7 +1100,7 @@ body::after {
           <!-- 天気予報ストリップ -->
           <div id="weather-strip-wrap" style="flex-shrink:0;margin-bottom:8px;display:none">
             <div id="weather-strip" style="display:flex;gap:4px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none"></div>
-            <div id="weather-holiday-notice" style="display:none;font-size:11px;color:var(--green);background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:6px;padding:4px 8px;margin-top:4px">🏛️ 祝日のため Univillage ジムは休業です</div>
+            <div id="weather-holiday-notice" style="display:none;font-size:11px;color:var(--green);background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.2);border-radius:6px;padding:4px 8px;margin-top:4px">🏛️ 祝日のため UTM ジムは 9:00〜13:00 営業</div>
           </div>
           <div id="sync-status-bar" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text3);flex-shrink:0">
             <span id="sync-status-text">📡 同期データ確認中...</span>
@@ -1522,14 +1516,14 @@ body::after {
         </div>
       </div>
 
-      <!-- Univillage ジム休業日マーク -->
+      <!-- UTM 大学休日マーク -->
       <div class="setting-row" id="utm-holiday-row" style="display:none">
         <div>
-          <div class="setting-label">Univillage ジム休業日</div>
-          <div class="setting-desc" id="utm-holiday-desc">今日を大学休日（Univillage ジム休業）としてマーク</div>
+          <div class="setting-label">UTM ジム休業日</div>
+          <div class="setting-desc" id="utm-holiday-desc">今日を大学休日（ジム休み）としてマーク</div>
         </div>
         <button id="utm-holiday-btn" onclick="toggleUtmHoliday()"
-          style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">Univillage 休業日にする</button>
+          style="padding:5px 14px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:12px;cursor:pointer;font-family:'M PLUS 1p',sans-serif;transition:all .2s">休業日にする</button>
       </div>
 
       <div class="setting-row">
@@ -1609,24 +1603,6 @@ body::after {
             <button class="btn btn-secondary btn-sm" onclick="connectGoogleCalendar()">🔗 OAuth で連携</button>
             <button class="btn btn-secondary btn-sm" id="gcal-disconnect-btn" onclick="disconnectGoogleCalendar()" style="display:none">🔌 連携解除</button>
             <span id="gcal-status" style="font-size:12px;color:var(--text3)"></span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 上級者向け設定 -->
-      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
-        <div style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">☁️ 天気表示設定</div>
-
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">天気の表示モード</div>
-            <div class="setting-desc" id="weather-mode-desc">時刻の真横に天気アイコンと気温を表示します</div>
-          </div>
-          <div style="display:flex;gap:6px">
-            <button id="wmode-btn-inline" onclick="setWeatherMode('inline')"
-              style="padding:5px 12px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🕐 時刻横</button>
-            <button id="wmode-btn-strip" onclick="setWeatherMode('strip')"
-              style="padding:5px 12px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">☁️ 上部バー</button>
           </div>
         </div>
       </div>
@@ -1948,9 +1924,12 @@ function renderTimeline() {
   }
 
   // ── Timed grid ──
-  // Weather display mode: 'inline' (next to time labels) or 'strip' (top bar)
-  const wxMode = getSettings().weatherMode || 'inline';
-  const useInlineWeather = wxMode === 'inline';
+  html += `<div class="timeline-grid" style="height:${TOTAL_H}px">`;
+
+  if(nowMin >= gridStart && nowMin <= gridEnd) {
+    const top = (nowMin - gridStart) * PX_PER_MIN;
+    html += `<div class="tg-now-line" style="top:${top}px"></div>`;
+  }
 
   // Build weather lookup: hour → {icon, temp}
   const weatherByHour = {};
@@ -1964,43 +1943,23 @@ function renderTimeline() {
     });
   }
 
-  // Show/hide weather strip based on mode (also affects home panel strip)
-  ['weather-strip-wrap','home-weather-bar'].forEach(sid => {
-    const sel = document.getElementById(sid);
-    if(sel) sel.style.display = (!useInlineWeather && _weatherCache) ? 'block' : 'none';
-  });
-
-  // Grid padding depends on mode: inline needs wider label area
-  const tgPad = useInlineWeather ? 96 : 72;
-  const nowLineLeft = useInlineWeather ? -(tgPad) : -72;
-  html += `<div class="timeline-grid${useInlineWeather?' inline':''}" style="height:${TOTAL_H}px">`;
-
-  if(nowMin >= gridStart && nowMin <= gridEnd) {
-    const top = (nowMin - gridStart) * PX_PER_MIN;
-    html += `<div class="tg-now-line${useInlineWeather?' inline':''}" style="top:${top}px"></div>`;
-  }
-
   // Hour lines + labels (with weather)
   for(let h=Math.floor(gridStart/60); h<=Math.ceil(gridEnd/60); h++) {
     const topPx = (h*60 - gridStart) * PX_PER_MIN;
     if(topPx > TOTAL_H + 1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${topPx}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
     const w = weatherByHour[h];
-    let weatherHtml = '';
-    if(useInlineWeather && w) {
-      weatherHtml = `<span style="font-size:13px;line-height:1">${w.icon}</span><span style="font-size:11px;color:var(--blue);font-weight:700">${w.temp}°</span>`;
-    } else if(!useInlineWeather && w) {
-      weatherHtml = `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`;
-    }
-    html += `<div class="tg-hour-label${useInlineWeather?' inline':''}" style="top:${topPx}px"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
+    const weatherHtml = w
+      ? `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`
+      : '';
+    html += `<div class="tg-hour-label" style="top:${topPx}px"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
   }
   // 30-min dashes (only if spacing ≥ 18px)
-  const dashLeft = tgPad;
   if(PX_PER_MIN * 30 >= 18) {
     for(let h=Math.floor(gridStart/60); h<Math.ceil(gridEnd/60); h++) {
       const topPx = (h*60+30 - gridStart) * PX_PER_MIN;
       if(topPx < TOTAL_H)
-        html += `<div style="position:absolute;left:${dashLeft}px;right:0;top:${topPx}px;height:0;border-top:1px dashed rgba(36,48,80,.4);z-index:1"></div>`;
+        html += `<div style="position:absolute;left:72px;right:0;top:${topPx}px;height:0;border-top:1px dashed rgba(36,48,80,.4);z-index:1"></div>`;
     }
   }
 
@@ -2018,8 +1977,7 @@ function renderTimeline() {
     const endLabel = item.end ? `〜${item.end}` : '';
     const colIdx   = itemCols[i];
     const totalCols = itemSpans[i];
-    const evLeft = tgPad + 2, evWidth = tgPad + 6;
-    html += `<div class="tg-event" style="top:${topPx}px;height:${hPx}px;color:${c};background:${c}18;left:calc(${evLeft}px + (100% - ${evWidth}px) * ${colIdx/totalCols});width:calc((100% - ${evWidth}px) / ${totalCols} - 2px);" onclick="editSchedModal(${item.id})">
+    html += `<div class="tg-event" style="top:${topPx}px;height:${hPx}px;color:${c};background:${c}18;left:calc(74px + (100% - 78px) * ${colIdx/totalCols});width:calc((100% - 78px) / ${totalCols} - 2px);" onclick="editSchedModal(${item.id})">
       <span class="tg-event-time">${item.time}${endLabel}</span>
       <span class="tg-event-title">${item.title}</span>
       <div class="tg-actions">
@@ -2046,7 +2004,7 @@ function renderTimeline() {
       const topPx=(cursor-gridStart)*PX_PER_MIN, hPx=(s-cursor)*PX_PER_MIN, mins=s-cursor;
       const hrs=Math.floor(mins/60),rem=mins%60;
       const freeLabel = hPx>=14 ? (hrs>0 ? '空き '+hrs+'時間'+(rem?rem+'分':'') : '空き '+mins+'分') : '';
-      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:${tgPad+4}px;right:2px">${freeLabel}</div>`;
+      html+=`<div class="tg-free" style="top:${topPx}px;height:${Math.max(hPx,2)}px;left:76px;right:2px">${freeLabel}</div>`;
     }
     cursor=Math.max(cursor,e);
   }
@@ -2054,7 +2012,7 @@ function renderTimeline() {
     const topPx=(cursor-gridStart)*PX_PER_MIN,hPx=(gridEnd-cursor)*PX_PER_MIN,mins=gridEnd-cursor;
     const hrs=Math.floor(mins/60),rem=mins%60;
     const lastLabel=hPx>=14?('空き '+(hrs>0?hrs+'時間'+(rem?rem+'分':''):mins+'分')+' (残り)'):'';
-    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:${tgPad+4}px;right:2px">${lastLabel}</div>`;
+    html+=`<div class="tg-free" style="top:${topPx}px;height:${hPx}px;left:76px;right:2px">${lastLabel}</div>`;
   }
 
   html += '</div>';
@@ -3154,37 +3112,12 @@ function loadSettings() {
   if(_getToken()) _updateGcalStatus('🔗 連携済み (自動同期ON)');
   // Timezone toggle
   setTimezone(getTimezone());
-  // Weather mode
-  _applyWeatherModeButtons(s.weatherMode || 'inline');
   // Advanced toggles
   const icsOn = s.showIcs || false;
   const utcOn = s.showUtcFix || false;
   _syncToggle('toggle-ics', icsOn);
   _syncToggle('toggle-utcfix', utcOn);
   applyAdvancedToggles();
-}
-
-function setWeatherMode(mode) {
-  saveSetting('weatherMode', mode);
-  _applyWeatherModeButtons(mode);
-  // Re-render timeline to apply new mode
-  if(document.getElementById('tab-today')?.classList.contains('active')) renderTimeline();
-  if(document.getElementById('tab-home')?.classList.contains('active')) renderHome();
-  // Trigger weather strip show/hide immediately
-  if(_weatherCache) _renderWeatherStrip(_weatherCache);
-}
-
-function _applyWeatherModeButtons(mode) {
-  const inlineBtn = document.getElementById('wmode-btn-inline');
-  const stripBtn  = document.getElementById('wmode-btn-strip');
-  const desc      = document.getElementById('weather-mode-desc');
-  const active   = { border:'2px solid var(--blue)', background:'rgba(74,158,255,.18)', color:'var(--blue)' };
-  const inactive = { border:'2px solid var(--border)', background:'transparent', color:'var(--text3)' };
-  if(inlineBtn) Object.assign(inlineBtn.style, mode==='inline' ? active : inactive);
-  if(stripBtn)  Object.assign(stripBtn.style,  mode==='strip'  ? active : inactive);
-  if(desc) desc.textContent = mode === 'inline'
-    ? '時刻の真横に天気アイコンと気温を表示します'
-    : 'スケジュール上部の横スクロールバーで天気を表示します';
 }
 
 function _syncToggle(id, on) {
@@ -4399,11 +4332,6 @@ function _renderWeatherStrip(data) {
   const codes  = data.hourly?.weathercode || [];
   const precip = data.hourly?.precipitation_probability || [];
   if(!hours.length) return;
-
-  // In inline mode, weather is shown in timeline labels — hide the strip bar
-  const wxMode = getSettings().weatherMode || 'inline';
-  const useInline = wxMode === 'inline';
-
   const nowH = new Date().getHours();
   const items = [];
   for(let i=nowH; i<Math.min(nowH+13, hours.length); i++) {
@@ -4426,12 +4354,11 @@ function _renderWeatherStrip(data) {
     const wrap  = document.getElementById(wrapId);
     const notice = document.getElementById(noticeId);
     if(strip) strip.innerHTML = html;
-    // Show strip only in 'strip' mode
-    if(wrap)  wrap.style.display = useInline ? 'none' : 'block';
+    if(wrap)  wrap.style.display = 'block';
     if(notice) {
       if(isHoliday && tz==='MY') {
         const hname = getTodayHolidayName();
-        notice.innerHTML = `🏛️ ${hname?hname+' — ':''}Univillage ジムは休業です`;
+        notice.innerHTML = `🏛️ ${hname?hname+' — ':''}UTM ジムは 9:00〜13:00 営業`;
         notice.style.display = 'block';
       } else {
         notice.style.display = 'none';
@@ -4447,7 +4374,7 @@ function quickAddGym() {
   const endMins   = startMins + 90;
   const fmt = m => `${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
   const items = getSchedule();
-  items.push({ id:Date.now(), time:fmt(startMins), end:fmt(endMins), title:'🏋️ Univillage ジム', color:'purple' });
+  items.push({ id:Date.now(), time:fmt(startMins), end:fmt(endMins), title:'🏋️ ジム', color:'purple' });
   items.sort((a,b)=>(a.time||'').localeCompare(b.time||''));
   saveSchedule(items);
   renderTimeline();
@@ -4555,13 +4482,13 @@ function _updateUtmHolidayBtn() {
   const desc = document.getElementById('utm-holiday-desc');
   if(!btn) return;
   const isHol = isUtmHolidayToday();
-  btn.textContent = isHol ? '✅ Univillage 休業日（解除する）' : 'Univillage 休業日にする';
+  btn.textContent = isHol ? '✅ 休業日（解除する）' : '休業日にする';
   btn.style.borderColor = isHol ? 'var(--green)' : 'var(--border)';
   btn.style.background  = isHol ? 'rgba(61,214,140,.12)' : 'transparent';
   btn.style.color       = isHol ? 'var(--green)' : 'var(--text3)';
   if(desc) desc.textContent = isHol
-    ? `今日 (${todayKey()}) は大学休日 — Univillage ジムは休業`
-    : '今日を大学休日（Univillage ジム休業）としてマーク';
+    ? `今日 (${todayKey()}) は大学休日 — ジムは休業`
+    : '今日を大学休日（ジム休み）としてマーク';
 }
 
 // ==================== WEEKLY → TODAY AUTO-REFLECT ====================
