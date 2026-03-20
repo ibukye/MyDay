@@ -1685,31 +1685,13 @@ body::after {
           </div>
           <div style="border-top:1px solid var(--border);margin-top:4px;padding-top:14px">
             <div style="font-size:11px;color:var(--text3);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em">🎤 Voice (Talk)</div>
-
-            <!-- TTS Engine selector -->
-            <div class="setting-row" style="margin-bottom:4px">
-              <div>
-                <div class="setting-label">TTS Engine</div>
-                <div class="setting-desc" id="tts-engine-desc">Google TTS: works in Brave / any browser</div>
-              </div>
-              <div style="display:flex;gap:5px">
-                <button id="tts-btn-google" onclick="setTtsEngine('google')"
-                  style="padding:4px 10px;border-radius:20px;border:2px solid var(--blue);background:rgba(74,158,255,.18);color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🌐 Google</button>
-                <button id="tts-btn-browser" onclick="setTtsEngine('browser')"
-                  style="padding:4px 10px;border-radius:20px;border:2px solid var(--border);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;font-weight:700;font-family:'M PLUS 1p',sans-serif;transition:all .2s">🖥 Browser</button>
-              </div>
+            <div class="setting-row">
+              <div class="setting-label">Speaker A</div>
+              <select id="voice-a" style="width:160px;font-size:12px"></select>
             </div>
-
-            <!-- Browser-only voice selectors (hidden for Google TTS) -->
-            <div id="browser-voice-rows">
-              <div class="setting-row">
-                <div class="setting-label">Speaker A</div>
-                <select id="voice-a" style="width:160px;font-size:12px"></select>
-              </div>
-              <div class="setting-row">
-                <div class="setting-label">Speaker B</div>
-                <select id="voice-b" style="width:160px;font-size:12px"></select>
-              </div>
+            <div class="setting-row">
+              <div class="setting-label">Speaker B</div>
+              <select id="voice-b" style="width:160px;font-size:12px"></select>
             </div>
             <div class="setting-row">
               <div class="setting-label">Speed</div>
@@ -3221,94 +3203,28 @@ function getSelectedVoice(selectId) {
   return availableVoices.find(v => v.name === voiceName) || null;
 }
 
-// ══════════ TTS ENGINE ══════════
-// Engine: 'google' (Google Translate TTS — works in Brave/any browser, no API key)
-//         'browser' (Web Speech API — needs Japanese OS voice pack)
-
-function setTtsEngine(engine) {
-  saveSetting('ttsEngine', engine);
-  _applyTtsEngineButtons(engine);
-}
-
-function _applyTtsEngineButtons(engine) {
-  const active   = { border:'2px solid var(--blue)', background:'rgba(74,158,255,.18)', color:'var(--blue)' };
-  const inactive = { border:'2px solid var(--border)', background:'transparent', color:'var(--text3)' };
-  const gBtn = document.getElementById('tts-btn-google');
-  const bBtn = document.getElementById('tts-btn-browser');
-  if(gBtn) Object.assign(gBtn.style, engine==='google' ? active : inactive);
-  if(bBtn) Object.assign(bBtn.style, engine==='browser' ? active : inactive);
-  const bvRows = document.getElementById('browser-voice-rows');
-  if(bvRows) bvRows.style.display = engine === 'browser' ? 'block' : 'none';
-  const desc = document.getElementById('tts-engine-desc');
-  if(desc) desc.textContent = engine === 'google'
-    ? 'Google TTS: works in Brave / any browser, no install needed'
-    : 'Browser TTS: requires Japanese voice pack in OS settings';
-}
-
-// ── Google Translate TTS ──
-// Uses the unofficial but stable translate.googleapis.com endpoint.
-// Audio tag src is not subject to CORS — works in all browsers including Brave.
-let _gTtsAudio = null;
-let _gTtsPaused = false;
-
-// Split text at sentence boundaries, max ~180 chars each (Google limit)
-function _splitForTts(text) {
-  const chunks = [];
-  const sentences = text.split(/(?<=[。！？\.\!\?])\s*/);
-  let current = '';
-  for(const s of sentences) {
-    if((current + s).length > 180 && current) {
-      chunks.push(current.trim());
-      current = s;
-    } else {
-      current += s;
-    }
-  }
-  if(current.trim()) chunks.push(current.trim());
-  return chunks.length ? chunks : [text.slice(0, 180)];
-}
-
-async function _playGoogleTts(text, rate) {
-  // Google Translate TTS — speed mapped roughly (0.5-1.5)
-  const slow = rate < 0.85;
-  const chunks = _splitForTts(text);
-  for(const chunk of chunks) {
-    if(!ttsActive) return;
-    await new Promise((resolve, reject) => {
-      const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(chunk)}&tl=ja&client=tw-ob${slow ? '&ttsspeed=0.24' : ''}`;
-      _gTtsAudio = new Audio(url);
-      _gTtsAudio.playbackRate = Math.min(Math.max(rate, 0.5), 2.0);
-      _gTtsAudio.onended = resolve;
-      _gTtsAudio.onerror = (e) => { console.warn('[Google TTS]', e); resolve(); };
-      _gTtsAudio.play().catch(e => { console.warn('[Google TTS play]', e); resolve(); });
-    });
-    if(!ttsActive) return;
-  }
-}
-
 function ttsPlay() {
+  if(!('speechSynthesis' in window)) {
+    alert('このブラウザは音声合成に対応していません。Chrome/Edgeをお使いください。');
+    return;
+  }
   if(ttsLines.length === 0) return;
 
   if(ttsPaused) {
     ttsPaused = false;
-    const engine = getSettings().ttsEngine || 'google';
-    if(engine === 'browser') {
-      speechSynthesis.resume();
-    } else if(_gTtsAudio) {
-      _gTtsAudio.play();
-    }
-    const btn = document.getElementById('tts-play-btn');
-    if(btn) btn.textContent = '⏸ 一時停止';
+    speechSynthesis.resume();
+    document.getElementById('tts-play-btn').textContent = '⏸ 一時停止';
     return;
   }
 
   ttsStop();
   ttsIndex = 0;
   ttsActive = true;
+  _startTtsKeepAlive();
   speakNext();
 }
 
-// ── Chrome TTS 15s bug workaround (browser engine only) ──
+// ── Chrome TTS 15s bug workaround: keep alive with periodic pause/resume ──
 let _ttsKeepAlive = null;
 function _startTtsKeepAlive() {
   clearInterval(_ttsKeepAlive);
@@ -3322,31 +3238,17 @@ function _startTtsKeepAlive() {
 function _stopTtsKeepAlive() { clearInterval(_ttsKeepAlive); }
 
 function _getBestJaVoice(preferName) {
+  // Try the explicitly selected voice first
   if(preferName) {
     const found = availableVoices.find(v => v.name === preferName);
     if(found) return found;
   }
+  // Fallback: find any Japanese voice
   const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
   return jaVoices[0] || null;
 }
 
-function _updateTtsIndicator(line) {
-  // Highlight bubble
-  document.querySelectorAll('.chat-bubble').forEach(el => el.style.outline = '');
-  const el = document.getElementById(`tts-line-${ttsIndex}`);
-  if(el) { el.style.outline = '2px solid var(--gold)'; el.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
-  // Update UI
-  const ind = document.getElementById('now-speaking-indicator');
-  const nameEl = document.getElementById('now-speaking-name');
-  if(ind) ind.style.display = 'flex';
-  if(nameEl) nameEl.textContent = line.speaker === 'A' ? 'Aさん話し中' : 'Bさん話し中';
-  const ctr = document.getElementById('tts-counter');
-  if(ctr) ctr.textContent = `${ttsIndex+1} / ${ttsLines.length}`;
-  const playBtn = document.getElementById('tts-play-btn');
-  if(playBtn) playBtn.textContent = '⏸ 一時停止';
-}
-
-async function speakNext() {
+function speakNext() {
   if(!ttsActive || ttsIndex >= ttsLines.length) {
     _stopTtsKeepAlive();
     ttsFinish();
@@ -3356,56 +3258,68 @@ async function speakNext() {
   const line = ttsLines[ttsIndex];
   const rate = parseFloat(document.getElementById('tts-rate')?.value || 1.0);
   const pitchDelta = parseFloat(document.getElementById('tts-pitch')?.value || 0.3);
-  const engine = getSettings().ttsEngine || 'google';
 
-  _updateTtsIndicator(line);
+  // Highlight current bubble
+  document.querySelectorAll('.chat-bubble').forEach(el => el.style.outline = '');
+  const currentEl = document.getElementById(`tts-line-${ttsIndex}`);
+  if(currentEl) {
+    currentEl.style.outline = '2px solid var(--gold)';
+    currentEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
 
-  if(engine === 'google') {
-    // ── Google Translate TTS ──
-    await _playGoogleTts(line.text, rate);
+  // Update indicator
+  const ind = document.getElementById('now-speaking-indicator');
+  const nameEl = document.getElementById('now-speaking-name');
+  if(ind) ind.style.display = 'flex';
+  if(nameEl) nameEl.textContent = line.speaker === 'A' ? 'Aさん話し中' : 'Bさん話し中';
+  const ctrEl = document.getElementById('tts-counter');
+  if(ctrEl) ctrEl.textContent = `${ttsIndex+1} / ${ttsLines.length}`;
+  const playBtn = document.getElementById('tts-play-btn');
+  if(playBtn) playBtn.textContent = '⏸ 一時停止';
+
+  const utter = new SpeechSynthesisUtterance(line.text);
+  utter.lang = 'ja-JP';
+  utter.rate = rate;
+
+  // Voice selection — only assign if a Japanese voice exists; else rely on lang='ja-JP'
+  const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
+  if(jaVoices.length > 0) {
+    const selA = document.getElementById('voice-a');
+    const selB = document.getElementById('voice-b');
+    const nameA = selA?.value ? selA.value.split('_').slice(1).join('_') : null;
+    const nameB = selB?.value ? selB.value.split('_').slice(1).join('_') : null;
+    const voiceA = _getBestJaVoice(nameA) || jaVoices[0];
+    const voiceB = _getBestJaVoice(nameB) || (jaVoices.length >= 2 ? jaVoices[1] : jaVoices[0]);
+    utter.voice = line.speaker === 'A' ? voiceA : voiceB;
+  }
+  // If no Japanese voice found, utter.lang='ja-JP' alone will trigger OS Japanese TTS
+  utter.pitch = line.speaker === 'A' ? 1.0 + pitchDelta : Math.max(0.5, 1.0 - pitchDelta);
+
+  utter.onend = () => {
     if(!ttsActive) return;
     ttsIndex++;
-    await new Promise(r => setTimeout(r, 180)); // short pause between speakers
-    speakNext();
+    setTimeout(speakNext, 250);
+  };
+  utter.onerror = (e) => {
+    console.warn('[TTS error]', e.error, 'line:', ttsIndex);
+    ttsIndex++;
+    setTimeout(speakNext, 300);
+  };
 
-  } else {
-    // ── Browser Web Speech API ──
-    const utter = new SpeechSynthesisUtterance(line.text);
-    utter.lang = 'ja-JP';
-    utter.rate = rate;
-    const jaVoices = availableVoices.filter(v => v.lang.startsWith('ja'));
-    if(jaVoices.length > 0) {
-      const selA = document.getElementById('voice-a');
-      const selB = document.getElementById('voice-b');
-      const nameA = selA?.value ? selA.value.split('_').slice(1).join('_') : null;
-      const nameB = selB?.value ? selB.value.split('_').slice(1).join('_') : null;
-      const voiceA = _getBestJaVoice(nameA) || jaVoices[0];
-      const voiceB = _getBestJaVoice(nameB) || (jaVoices.length >= 2 ? jaVoices[1] : jaVoices[0]);
-      utter.voice = line.speaker === 'A' ? voiceA : voiceB;
-    }
-    utter.pitch = line.speaker === 'A' ? 1.0 + pitchDelta : Math.max(0.5, 1.0 - pitchDelta);
-    utter.onend = () => { if(!ttsActive) return; ttsIndex++; setTimeout(speakNext, 250); };
-    utter.onerror = (e) => { console.warn('[TTS]', e.error); ttsIndex++; setTimeout(speakNext, 300); };
-    speechSynthesis.cancel();
-    setTimeout(() => { if(ttsActive) { _startTtsKeepAlive(); speechSynthesis.speak(utter); } }, 50);
-  }
+  speechSynthesis.cancel(); // clear queue before speaking
+  setTimeout(() => { if(ttsActive) speechSynthesis.speak(utter); }, 50);
 }
 
 function ttsPause() {
   if(!ttsActive) return;
-  const engine = getSettings().ttsEngine || 'google';
   if(ttsPaused) {
     ttsPaused = false;
-    if(engine === 'browser') speechSynthesis.resume();
-    else if(_gTtsAudio) _gTtsAudio.play();
-    const btn = document.getElementById('tts-play-btn');
-    if(btn) btn.textContent = '⏸ 一時停止';
+    speechSynthesis.resume();
+    document.getElementById('tts-play-btn').textContent = '⏸ 一時停止';
   } else {
     ttsPaused = true;
-    if(engine === 'browser') speechSynthesis.pause();
-    else if(_gTtsAudio) _gTtsAudio.pause();
-    const btn = document.getElementById('tts-play-btn');
-    if(btn) btn.textContent = '▶ 再生';
+    speechSynthesis.pause();
+    document.getElementById('tts-play-btn').textContent = '▶ 再生';
   }
 }
 
@@ -3414,7 +3328,6 @@ function ttsStop() {
   ttsPaused = false;
   _stopTtsKeepAlive();
   speechSynthesis.cancel();
-  if(_gTtsAudio) { _gTtsAudio.pause(); _gTtsAudio.src = ''; _gTtsAudio = null; }
   document.querySelectorAll('.chat-bubble').forEach(el => el.style.outline = '');
   const ind = document.getElementById('now-speaking-indicator');
   if(ind) ind.style.display = 'none';
@@ -3425,7 +3338,6 @@ function ttsStop() {
 function ttsFinish() {
   ttsActive = false;
   _stopTtsKeepAlive();
-  _gTtsAudio = null;
   document.querySelectorAll('.chat-bubble').forEach(el => el.style.outline = '');
   const ind = document.getElementById('now-speaking-indicator');
   if(ind) ind.style.display = 'none';
@@ -3558,7 +3470,6 @@ function loadSettings() {
   _syncToggle('toggle-utcfix', utcOn);
   // News meta toggle
   _syncToggle('toggle-news-meta', s.showNewsMeta || false);
-  _applyTtsEngineButtons(s.ttsEngine || 'google');
   applyAdvancedToggles();
 }
 
@@ -5636,8 +5547,6 @@ window.addEventListener('DOMContentLoaded', () => {
   _applyAiProviderButtons(_s0.aiProvider || 'gemini');
   // News meta toggle (default OFF)
   _syncToggle('toggle-news-meta', _s0.showNewsMeta || false);
-  // TTS engine (default google for Brave/all browsers)
-  _applyTtsEngineButtons(_s0.ttsEngine || 'google');
 });
 </script>
 </body>
