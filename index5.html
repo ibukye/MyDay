@@ -745,7 +745,7 @@ body::after {
 
 /* ── FULL-DAY TIMELINE GRID ── */
 .timeline-grid { position:relative;padding-left:72px;overflow:visible; }
-.timeline-grid.inline { padding-left:108px; }
+.timeline-grid.inline { padding-left:96px; }
 .tg-hour-label {
   position:absolute;left:0;width:68px;text-align:right;padding-right:4px;
   font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);
@@ -753,17 +753,15 @@ body::after {
   display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;
 }
 .tg-hour-label.inline {
-  width:104px;flex-direction:row;align-items:center;gap:5px;justify-content:flex-end;
-  transform:translateY(-8px);white-space:nowrap;padding-right:4px;
+  width:92px;flex-direction:row;align-items:center;gap:4px;justify-content:flex-end;
+  transform:translateY(-8px);white-space:nowrap;
 }
-.tg-hour-label.inline .tl-wx-icon { font-size:14px;line-height:1; }
-.tg-hour-label.inline .tl-wx-temp { font-size:11px;font-weight:700;color:var(--blue); }
 .tg-now-line {
   position:absolute;left:-72px;right:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--gold),var(--gold));
   z-index:5;pointer-events:none;
 }
-.tg-now-line.inline { left:-108px; }
+.tg-now-line.inline { left:-96px; }
 .tg-now-line::before {
   content:'▶';position:absolute;left:-14px;top:-7px;
   font-size:10px;color:var(--gold);
@@ -1973,7 +1971,7 @@ function renderTimeline() {
   });
 
   // Grid padding depends on mode: inline needs wider label area
-  const tgPad = useInlineWeather ? 108 : 72;
+  const tgPad = useInlineWeather ? 96 : 72;
   const nowLineLeft = useInlineWeather ? -(tgPad) : -72;
   html += `<div class="timeline-grid${useInlineWeather?' inline':''}" style="height:${TOTAL_H}px">`;
 
@@ -1989,10 +1987,10 @@ function renderTimeline() {
     html += `<div style="position:absolute;left:0;right:0;top:${topPx}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
     const w = weatherByHour[h];
     let weatherHtml = '';
-    if(w) {
-      weatherHtml = useInlineWeather
-        ? `<span class="tl-wx-icon">${w.icon}</span><span class="tl-wx-temp">${w.temp}°</span>`
-        : `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`;
+    if(useInlineWeather && w) {
+      weatherHtml = `<span style="font-size:13px;line-height:1">${w.icon}</span><span style="font-size:11px;color:var(--blue);font-weight:700">${w.temp}°</span>`;
+    } else if(!useInlineWeather && w) {
+      weatherHtml = `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`;
     }
     html += `<div class="tg-hour-label${useInlineWeather?' inline':''}" style="top:${topPx}px"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
   }
@@ -3835,7 +3833,7 @@ function renderHomeMiniTimeline() {
     wH.forEach((t2,i)=>{ const hw=new Date(t2).getHours(); miniWByH[hw]={icon:_weatherIcon(wC[i]||0),temp:Math.round(wT[i])}; });
   }
   const hasW = Object.keys(miniWByH).length > 0;
-  const LW = hasW ? 80 : 44;
+  const LW = hasW ? 60 : 44;
 
   let html = `<div style="position:relative;height:${TOTAL_H}px;padding-left:${LW+4}px;overflow:hidden">`;
   if(nowMin >= gridStart && nowMin <= gridEnd) {
@@ -3846,11 +3844,8 @@ function renderHomeMiniTimeline() {
     if(t > TOTAL_H+1) break;
     html += `<div style="position:absolute;left:0;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
     const ww = miniWByH[h2];
-    const wLine = ww
-      ? `<span style="font-size:12px;line-height:1;margin-left:3px">${ww.icon}</span><span style="font-size:10px;font-weight:700;color:var(--blue)">${ww.temp}°</span>`
-      : '';
-    const labelStyle = `position:absolute;left:0;width:${LW}px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-8px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3);display:flex;flex-direction:row;align-items:center;justify-content:flex-end;white-space:nowrap;gap:2px`;
-    html += `<div style="${labelStyle}">${String(h2).padStart(2,'0')}:00${wLine}</div>`;
+    const wLine = ww ? `<span style="display:flex;align-items:center;justify-content:flex-end;gap:1px;font-size:9px;color:var(--blue);line-height:1.2">${ww.icon}<b>${ww.temp}°</b></span>` : '';
+    html += `<div style="position:absolute;left:0;width:${LW}px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-${hasW?11:7}px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3);display:flex;flex-direction:column;align-items:flex-end">${String(h2).padStart(2,'0')}:00${wLine}</div>`;
   }
   const sorted = [...items].sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
   // Simple column layout
@@ -4395,15 +4390,6 @@ async function fetchWeather() {
     const data = await res.json();
     _weatherCache = data; _weatherDate = today;
     _renderWeatherStrip(data);
-    // In inline mode the timeline hour labels carry the weather — re-render to inject them
-    const wxMode2 = getSettings().weatherMode || 'inline';
-    if(wxMode2 === 'inline') {
-      if(document.getElementById('tab-today')?.classList.contains('active')) renderTimeline();
-      if(document.getElementById('tab-home')?.classList.contains('active')) {
-        renderHomeMiniTimeline();
-        renderHomeSchedule();
-      }
-    }
   } catch(e) { console.warn('[weather]', e.message); }
 }
 
