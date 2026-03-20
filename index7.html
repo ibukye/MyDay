@@ -748,7 +748,7 @@ body::after {
 .timeline-grid.inline { padding-left:108px; }
 .tg-hour-label {
   position:absolute;left:0;width:68px;text-align:right;padding-right:4px;
-  font-family:'Outfit',sans-serif;font-size:11px;color:#fff;font-weight:500;
+  font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3);
   transform:translateY(-7px);pointer-events:none;z-index:2;
   display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;
 }
@@ -1986,17 +1986,16 @@ function renderTimeline() {
   for(let h=Math.floor(gridStart/60); h<=Math.ceil(gridEnd/60); h++) {
     const topPx = (h*60 - gridStart) * PX_PER_MIN;
     if(topPx > TOTAL_H + 1) break;
-    // Hour line starts at label area end (tgPad), not left:0
-    html += `<div style="position:absolute;left:${tgPad}px;right:0;top:${topPx}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
+    html += `<div style="position:absolute;left:0;right:0;top:${topPx}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
     const w = weatherByHour[h];
     if(useInlineWeather && w) {
-      // Inline mode: time + icon + temp all on one horizontal row, time in white
-      html += `<div style="position:absolute;left:0;width:104px;top:${topPx}px;transform:translateY(-8px);padding-right:4px;pointer-events:none;z-index:2;display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:4px;white-space:nowrap;font-family:'Outfit',sans-serif;font-size:11px;"><span style="color:#fff;font-weight:500">${String(h).padStart(2,'0')}:00</span><span style="font-size:14px;line-height:1">${w.icon}</span><span style="font-size:11px;font-weight:700;color:var(--blue)">${w.temp}°</span></div>`;
+      // Inline mode: time + icon + temp all on one horizontal row, no class dependency
+      html += `<div style="position:absolute;left:0;width:104px;top:${topPx}px;transform:translateY(-8px);padding-right:4px;pointer-events:none;z-index:2;display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:4px;white-space:nowrap;font-family:'Outfit',sans-serif;font-size:11px;color:var(--text3)"><span>${String(h).padStart(2,'0')}:00</span><span style="font-size:14px;line-height:1">${w.icon}</span><span style="font-size:11px;font-weight:700;color:var(--blue)">${w.temp}°</span></div>`;
     } else {
       const weatherHtml = (!useInlineWeather && w)
         ? `<span style="font-size:10px;line-height:1">${w.icon}</span><span style="font-size:10px;color:var(--blue);font-weight:600">${w.temp}°</span>`
         : '';
-      html += `<div class="tg-hour-label" style="top:${topPx}px;color:#fff"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
+      html += `<div class="tg-hour-label" style="top:${topPx}px"><span>${String(h).padStart(2,'0')}:00</span>${weatherHtml}</div>`;
     }
   }
   // 30-min dashes (only if spacing ≥ 18px)
@@ -3847,14 +3846,13 @@ function renderHomeMiniTimeline() {
   for(let h2=Math.floor(gridStart/60); h2<=Math.ceil(gridEnd/60); h2++) {
     const t = (h2*60-gridStart)*PPM;
     if(t > TOTAL_H+1) break;
-    // Hour line starts after label area
-    html += `<div style="position:absolute;left:${LW+4}px;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
+    html += `<div style="position:absolute;left:0;right:0;top:${t}px;height:0;border-top:1px solid var(--border);z-index:1"></div>`;
     const ww = miniWByH[h2];
     if(ww) {
-      // Horizontal inline: time white + icon + temp
-      html += `<div style="position:absolute;left:0;width:${LW}px;top:${t}px;transform:translateY(-8px);padding-right:4px;pointer-events:none;z-index:2;display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:3px;white-space:nowrap;font-family:'Outfit',sans-serif;font-size:10px;"><span style="color:#fff;font-weight:500">${String(h2).padStart(2,'0')}:00</span><span style="font-size:12px;line-height:1">${ww.icon}</span><span style="font-size:10px;font-weight:700;color:var(--blue)">${ww.temp}°</span></div>`;
+      // Horizontal inline: time + icon + temp in one row
+      html += `<div style="position:absolute;left:0;width:${LW}px;top:${t}px;transform:translateY(-8px);padding-right:4px;pointer-events:none;z-index:2;display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:3px;white-space:nowrap;font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3)"><span>${String(h2).padStart(2,'0')}:00</span><span style="font-size:12px;line-height:1">${ww.icon}</span><span style="font-size:10px;font-weight:700;color:var(--blue)">${ww.temp}°</span></div>`;
     } else {
-      html += `<div style="position:absolute;left:0;width:44px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-7px);font-family:'Outfit',sans-serif;font-size:10px;color:#fff;font-weight:500">${String(h2).padStart(2,'0')}:00</div>`;
+      html += `<div style="position:absolute;left:0;width:44px;text-align:right;padding-right:4px;top:${t}px;transform:translateY(-7px);font-family:'Outfit',sans-serif;font-size:10px;color:var(--text3)">${String(h2).padStart(2,'0')}:00</div>`;
     }
   }
   const sorted = [...items].sort((a,b)=>(timeToMins(a.time)||0)-(timeToMins(b.time)||0));
